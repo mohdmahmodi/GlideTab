@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compare · GlideTab</title>
+  <meta name="description" content="GlideTab compared with the macOS ⌘Tab switcher, Mission Control, AltTab, Witch, Contexts, HyperSwitch and Raycast.">
+  <meta property="og:title" content="Compare GlideTab">
+  <meta property="og:image" content="https://glidetab.com/images/og.png">
+  <link rel="canonical" href="https://glidetab.com/compare">
+  <meta property="og:url" content="https://glidetab.com/compare">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/styles.css?v=18">
+</head>
+<body>
+
+<header class="menubar">
+  <div class="app-menu" id="app-menu">
+    <button class="app-name" aria-haspopup="true" aria-expanded="false"><img src="/images/icon.png" alt=""> GlideTab</button>
+    <div class="menu" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="https://github.com/mohdmahmodi/glidetab" role="menuitem">View Source on GitHub</a>
+      <a href="https://github.com/mohdmahmodi/glidetab/releases" role="menuitem">Release Notes</a>
+      <hr>
+      <a href="/privacy" role="menuitem">Privacy</a>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Pages">
+    <a href="/features">Features</a>
+    <a href="/compare" aria-current="page">Compare</a>
+    <a href="/#faq">Questions</a>
+    <a href="https://github.com/mohdmahmodi/glidetab">GitHub</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="status">
+    <button class="icon" id="theme-toggle" aria-label="Switch between light and dark"><svg><use href="/icons.svg#i-appearance"/></svg></button>
+    <span class="icon" aria-hidden="true"><svg><use href="/icons.svg#i-wifi"/></svg></span>
+    <span class="icon" aria-hidden="true"><svg><use href="/icons.svg#i-battery"/></svg></span>
+    <span class="clock" id="clock" aria-hidden="true"></span>
+  </div>
+  <a class="download" href="https://github.com/mohdmahmodi/glidetab/releases/latest/download/GlideTab.zip">Download</a>
+</header>
+
+<main class="wrap">
+  <div class="page-head center">
+    <h1>Compare</h1>
+    <p>Pick an app to see how it stacks up.</p>
+  </div>
+
+  <div class="picker-row">
+    <div class="segmented picker" role="tablist" aria-label="Compare with">
+      <button role="tab" data-app="commandtab">⌘Tab</button>
+      <button role="tab" data-app="missioncontrol">Mission Control</button>
+      <button role="tab" data-app="alttab">AltTab</button>
+      <button role="tab" data-app="witch">Witch</button>
+      <button role="tab" data-app="contexts">Contexts</button>
+      <button role="tab" data-app="hyperswitch">HyperSwitch</button>
+      <button role="tab" data-app="raycast">Raycast</button>
+      <button role="tab" data-app="all">All apps</button>
+    </div>
+  </div>
+
+  <section class="duel" id="duel" aria-live="polite"></section>
+
+  <p class="footnote center">As of October 2026, from each developer's website. A dash means the feature isn't offered or isn't documented. Prices in US dollars. Spotted a mistake? <a href="https://github.com/mohdmahmodi/glidetab/issues">Open an issue</a>.</p>
+
+  <div class="dialog-wrap">
+    <div class="dialog" role="group" aria-labelledby="dl-title">
+      <img src="/images/icon.png" alt="" width="88" height="88">
+      <h2 id="dl-title">Try GlideTab</h2>
+      <p>Version <span data-version>1.0.0</span> for macOS 14 or later.<br>Free, about 5 MB.</p>
+      <div class="buttons">
+        <a class="button secondary" href="/features">All Features</a>
+        <a class="button primary" href="https://github.com/mohdmahmodi/glidetab/releases/latest/download/GlideTab.zip">Download</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Mohd Mahmodi. GlideTab is released under the MIT License.</span>
+    <nav aria-label="Footer">
+      <a href="/">Home</a>
+      <a href="/features">Features</a>
+      <a href="/privacy">Privacy</a>
+      <a href="https://github.com/mohdmahmodi/glidetab">GitHub</a>
+      <a href="https://x.com/mohdmahmodi">X</a>
+      <a href="https://mohdmahmodi.com">mohdmahmodi.com</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" defer></script>
+<script src="/site.js?v=17" defer></script>
+<script src="/compare.js?v=17" defer></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy · GlideTab</title>
+  <meta name="description" content="What GlideTab does and doesn't do with your data.">
+  <link rel="canonical" href="https://glidetab.com/privacy">
+  <meta property="og:url" content="https://glidetab.com/privacy">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="stylesheet" href="/styles.css?v=18">
+</head>
+<body>
+
+<header class="menubar">
+  <div class="app-menu" id="app-menu">
+    <button class="app-name" aria-haspopup="true" aria-expanded="false"><img src="/images/icon.png" alt=""> GlideTab</button>
+    <div class="menu" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="https://github.com/mohdmahmodi/glidetab" role="menuitem">View Source on GitHub</a>
+      <a href="https://github.com/mohdmahmodi/glidetab/releases" role="menuitem">Release Notes</a>
+      <hr>
+      <a href="/privacy" role="menuitem">Privacy</a>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Pages">
+    <a href="/features">Features</a>
+    <a href="/compare">Compare</a>
+    <a href="/#faq">Questions</a>
+    <a href="https://github.com/mohdmahmodi/glidetab">GitHub</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="status">
+    <button class="icon" id="theme-toggle" aria-label="Switch between light and dark"><svg><use href="/icons.svg#i-appearance"/></svg></button>
+    <span class="icon" aria-hidden="true"><svg><use href="/icons.svg#i-wifi"/></svg></span>
+    <span class="icon" aria-hidden="true"><svg><use href="/icons.svg#i-battery"/></svg></span>
+    <span class="clock" id="clock" aria-hidden="true"></span>
+  </div>
+  <a class="download" href="https://github.com/mohdmahmodi/glidetab/releases/latest/download/GlideTab.zip">Download</a>
+</header>
+<main class="page">
+  <div class="wrap">
+    <article class="window">
+      <div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>Privacy</div>
+      <div class="window-body">
+        <h1>Privacy</h1>
+        <p>Last updated October 12, 2026.</p>
+
+        <h2>The app</h2>
+        <ul>
+          <li>GlideTab has no account, no analytics and no crash reporting.</li>
+          <li>Window titles, browser tab titles and addresses, and window thumbnails are read only to show them in the switcher. They stay in memory and are never written to disk or sent anywhere.</li>
+          <li>The only network request is the update check to the GitHub Releases API, at most once a day. It sends no information about you or your Mac beyond what any web request includes. You can turn it off in Settings, General.</li>
+          <li>Your settings are stored on your Mac in the standard macOS preferences file for GlideTab.</li>
+        </ul>
+
+        <h2>Permissions</h2>
+        <ul>
+          <li>Accessibility is used to read the shortcut keys and to bring windows to the front.</li>
+          <li>Screen Recording is used for thumbnails and the full-size preview.</li>
+          <li>Automation is used to read and switch browser tabs, and macOS asks once for each browser.</li>
+        </ul>
+
+        <h2>This website</h2>
+        <ul>
+          <li>The site uses no cookies, analytics or trackers.</li>
+          <li>It is hosted on Cloudflare Pages, which keeps standard server logs. Scripts for the animations load from cdnjs, also run by Cloudflare.</li>
+          <li>Downloads come from GitHub Releases.</li>
+        </ul>
+
+        <h2>Questions</h2>
+        <p>Open an issue on <a href="https://github.com/mohdmahmodi/glidetab">GitHub</a>, or reach out on <a href="https://x.com/mohdmahmodi">X</a>.</p>
+        <p><a class="text-link" href="/">Back to GlideTab</a></p>
+      </div>
+    </article>
+  </div>
+</main>
+<script src="/site.js?v=17" defer></script>
+</body>
+</html>

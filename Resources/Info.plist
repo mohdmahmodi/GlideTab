@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.mohdmahmodi.GlideTab</string>
+	<key>CFBundleName</key>
+	<string>GlideTab</string>
+	<key>CFBundleDisplayName</key>
+	<string>GlideTab</string>
+	<key>CFBundleExecutable</key>
+	<string>GlideTab</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.0</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>GlideTab lists your browser tabs so you can switch to them.</string>
+	<key>GlideTabUpdateRepository</key>
+	<string>mohdmahmodi/glidetab</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>© 2026 Mohd Mahmodi. MIT License.</string>
+	<key>NSScreenCaptureUsageDescription</key>
+	<string>GlideTab shows live previews of your windows in the switcher.</string>
+</dict>
+</plist>

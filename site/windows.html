@@ -1,0 +1,193 @@
+<!-- Demo windows. app.js loads this file and builds the desktop and the switcher thumbnails from these templates. -->
+<template id="win-browser">
+  <div class="safari-bar">
+    <span class="group"><span class="lights"><i></i><i></i><i></i></span><svg><use href="/icons.svg#i-sidebar"/></svg></span>
+    <span class="group"><svg><use href="/icons.svg#i-back"/></svg><svg class="disabled"><use href="/icons.svg#i-forward"/></svg></span>
+    <span class="address"><svg><use href="/icons.svg#i-lock"/></svg>fieldnotes.example/lisbon<svg class="reload"><use href="/icons.svg#i-reload"/></svg></span>
+    <span class="group tools"><svg><use href="/icons.svg#i-share"/></svg><svg><use href="/icons.svg#i-plus"/></svg><svg><use href="/icons.svg#i-tabs"/></svg></span>
+  </div>
+  <div class="w-page">
+    <div class="w-site"><b>Field Notes</b><span>Travel</span><span>Food</span><span>City Guides</span><span>Maps</span><span class="sub">Subscribe</span></div>
+    <div class="w-hero-art">
+      <i class="sun"></i><i class="cloud c1"></i><i class="cloud c2"></i>
+      <i class="far"></i><i class="river"></i>
+      <i class="tower t1"></i><i class="tower t2"></i><i class="deck"></i><i class="cable k1"></i><i class="cable k2"></i><i class="cable k3"></i>
+      <i class="town"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></i>
+      <span class="caption">The 25 de Abril bridge at golden hour</span>
+    </div>
+    <div class="w-article">
+      <div>
+        <p class="kicker">City Guides</p>
+        <h4>Four days in Lisbon</h4>
+        <p class="standfirst">A slow plan for hills, trams and long lunches by the river.</p>
+        <div class="byline"><i></i><span><b>Ana Ribeiro</b> · October 12 · 8 min read</span></div>
+      </div>
+      <aside>
+        <p class="more-h">More guides</p>
+        <div class="mg"><i style="background:#7aa874"></i><span><b>Porto by tram</b>3 days</span></div>
+        <div class="mg"><i style="background:#e9b44c"></i><span><b>Sintra on foot</b>Day trip</span></div>
+      </aside>
+    </div>
+  </div>
+</template>
+
+<template id="win-code">
+  <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span>Switcher.swift · GlideTab</div>
+  <div class="w-code">
+    <div class="ab"><svg><use href="/icons.svg#i-doc"/></svg><svg><use href="/icons.svg#i-search"/></svg><svg><use href="/icons.svg#i-branch"/></svg><svg><use href="/icons.svg#i-play"/></svg></div>
+    <div class="tree">
+      <p>GlideTab</p>
+      <span class="d">Sources</span>
+      <span class="i">AppDelegate.swift</span>
+      <span class="i">Panel.swift</span>
+      <span class="i on">Switcher.swift</span>
+      <span class="i">WindowManager.swift</span>
+      <span class="i">Gestures.swift</span>
+      <span class="d">Tests</span>
+      <span class="d">Resources</span>
+    </div>
+    <div class="ed">
+      <div class="tabs"><span class="on">Switcher.swift</span><span>Panel.swift</span><span>Prefs.swift</span></div>
+      <pre class="src"><span class="l"><span class="c">// Switches to the window you picked.</span></span><span class="l"><span class="k">func</span> <span class="f">commit</span>() {</span><span class="l">    <span class="k">guard</span> <span class="k">let</span> session = openSession <span class="k">else</span> { <span class="k">return</span> }</span><span class="l">    <span class="k">let</span> target = items[selected]</span><span class="l">    close(keepPreview: <span class="k">true</span>)</span><span class="l"></span><span class="l">    <span class="k">switch</span> target {</span><span class="l">    <span class="k">case let</span> .window(window):</span><span class="l">        <span class="t">WindowManager</span>.shared.<span class="f">focus</span>(window)</span><span class="l">    <span class="k">case let</span> .tab(tab):</span><span class="l">        <span class="t">BrowserTabs</span>.shared.<span class="f">select</span>(tab)</span><span class="l">    }</span><span class="l">    log(<span class="s">"switched in \(elapsed) ms"</span>)</span><span class="l">}</span><span class="l"></span><span class="l"><span class="k">private func</span> <span class="f">move</span>(<span class="k">_</span> step: <span class="t">Int</span>) {</span><span class="l">    <span class="k">let</span> count = visible.count</span><span class="l">    selected = (selected + step + count) % count</span><span class="l">    panel.<span class="f">render</span>(selected: selected)</span><span class="l">}</span></pre>
+    </div>
+  </div>
+  <div class="w-code-status"><span>main</span><span>0 errors</span><span class="r">Swift · Ln 4, Col 18</span></div>
+</template>
+
+<template id="win-messages">
+  <div class="w-msg">
+    <div class="w-side">
+      <div class="tb"><span class="lights"><i></i><i></i><i></i></span><svg class="push"><use href="/icons.svg#i-compose"/></svg></div>
+      <div class="sfield"><svg><use href="/icons.svg#i-search"/></svg>Search</div>
+      <div class="cv on"><i style="background:#f59e0b">AR</i><span><b>Ana Ribeiro</b><em>See you at the airport!</em></span><time>9:41</time></div>
+      <div class="cv"><i style="background:#10b981">SL</i><span><b>Sam Lee</b><em>Sending the notes now</em></span><time>9:12</time></div>
+      <div class="cv"><i style="background:#6366f1">MJ</i><span><b>Mia Jensen</b><em>Dinner on Friday?</em></span><time>Mon</time></div>
+      <div class="cv"><i style="background:#ef4444">TK</i><span><b>Tom Kato</b><em>Haha, perfect</em></span><time>Sun</time></div>
+    </div>
+    <div class="chat">
+      <div class="tb center"><i style="background:#f59e0b">AR</i><b>Ana Ribeiro</b></div>
+      <div class="bubbles">
+        <p class="time">Today 9:30</p>
+        <p class="them">Did you book the tram tickets?</p>
+        <p class="me">Not yet, doing it tonight</p>
+        <p class="them">Perfect. Flights are confirmed, seats together</p>
+        <p class="me">Amazing, thank you</p>
+        <p class="them">See you at the airport!</p>
+      </div>
+      <div class="compose">Message</div>
+    </div>
+  </div>
+</template>
+
+<template id="win-design">
+  <div class="w-design">
+    <div class="dbar"><span class="lights"><i></i><i></i><i></i></span><span class="tools"><i class="on"></i><i></i><i></i><i></i></span><b>Lisbon App · Home</b><span class="share">Share</span></div>
+    <div class="dbody">
+      <div class="layers">
+        <p>Pages</p><span class="on">Home</span><span>Trip details</span><span>Map</span>
+        <p>Layers</p><span class="fr">Home</span><span class="in">Header</span><span class="in sel">Hero card</span><span class="in">Trip list</span><span class="in">Tab bar</span>
+      </div>
+      <div class="canvas">
+        <div class="phone"><i class="hdr"></i><i class="hero"></i><i class="row"></i><i class="row"></i><i class="row short"></i><i class="tabbar"></i><span class="selbox"><b></b><b></b><b></b><b></b></span></div>
+        <div class="phone two"><i class="map"></i><i class="pin"></i><i class="sheet"></i></div>
+      </div>
+      <div class="props">
+        <p>Design</p>
+        <div class="kv"><span>X</span><b>24</b><span>Y</span><b>96</b></div>
+        <div class="kv"><span>W</span><b>327</b><span>H</span><b>180</b></div>
+        <p>Fill</p>
+        <div class="sw"><i></i><b>F2A65A</b></div>
+        <p>Corner</p>
+        <div class="kv one"><b>16</b></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="win-photos">
+  <div class="w-photos">
+    <div class="w-side">
+      <div class="tb"><span class="lights"><i></i><i></i><i></i></span></div>
+      <p class="group-label">Photos</p>
+      <span class="on"><svg><use href="/icons.svg#i-grid"/></svg>Library</span>
+      <span><svg><use href="/icons.svg#i-star"/></svg>Favorites</span>
+      <span><svg><use href="/icons.svg#i-clock"/></svg>Recently Saved</span>
+      <p class="group-label">Albums</p>
+      <span><svg><use href="/icons.svg#i-archive"/></svg>Lisbon 2026</span>
+    </div>
+    <div class="w-main">
+      <div class="tb"><b>Library</b><span class="seg"><span>Years</span><span>Months</span><span class="on">All Photos</span></span></div>
+      <div class="grid"><i class="ph p0"><b></b><u></u></i><i class="ph p1"><b></b><u></u></i><i class="ph p2"><b></b><u></u></i><i class="ph p3"><b></b><u></u></i><i class="ph p4"><b></b><u></u></i><i class="ph p5"><b></b><u></u></i><i class="ph p6"><b></b><u></u></i><i class="ph p7"><b></b><u></u></i><i class="ph p0"><b></b><u></u></i><i class="ph p1"><b></b><u></u></i><i class="ph p2"><b></b><u></u></i><i class="ph p3"><b></b><u></u></i><i class="ph p4"><b></b><u></u></i><i class="ph p5"><b></b><u></u></i><i class="ph p6"><b></b><u></u></i></div>
+    </div>
+  </div>
+</template>
+
+<template id="win-calendar">
+  <div class="tb w-cal-bar">
+    <span class="lights"><i></i><i></i><i></i></span>
+    <b>October 2026</b>
+    <span class="seg"><span>Day</span><span class="on">Week</span><span>Month</span><span>Year</span></span>
+    <span class="today">Today</span>
+  </div>
+  <div class="w-cal">
+    <div class="w-cal-head"><span></span><span>Mon <b>12</b></span><span>Tue <b>13</b></span><span class="now">Wed <b>14</b></span><span>Thu <b>15</b></span><span>Fri <b>16</b></span></div>
+    <div class="w-cal-grid">
+      <div class="w-hours"><span>9 AM</span><span>10 AM</span><span>11 AM</span><span>Noon</span><span>1 PM</span><span>2 PM</span></div>
+      <div class="w-day"><i class="ev blue" style="top:4%;height:13%">Standup<small>9:00</small></i><i class="ev green" style="top:50%;height:28%">Design review<small>12:00</small></i></div>
+      <div class="w-day"><i class="ev orange" style="top:22%;height:22%">Dentist<small>10:30</small></i></div>
+      <div class="w-day"><i class="ev blue" style="top:4%;height:13%">Standup<small>9:00</small></i><i class="ev red" style="top:62%;height:20%">Release 1.0<small>1:30</small></i><span class="nowline" style="top:40%"></span></div>
+      <div class="w-day"><i class="ev green" style="top:30%;height:34%">Focus time<small>10:45</small></i></div>
+      <div class="w-day"><i class="ev orange" style="top:72%;height:20%">Pack<small>2:00</small></i></div>
+    </div>
+  </div>
+</template>
+
+<template id="win-mail">
+  <div class="w-mail">
+    <div class="w-side">
+      <div class="tb"><span class="lights"><i></i><i></i><i></i></span></div>
+      <p class="group-label">Favorites</p>
+      <span class="on"><svg><use href="/icons.svg#i-tray"/></svg>Inbox<em>4</em></span>
+      <span><svg><use href="/icons.svg#i-star"/></svg>VIP</span>
+      <span><svg><use href="/icons.svg#i-send"/></svg>Sent</span>
+      <span><svg><use href="/icons.svg#i-archive"/></svg>Archive</span>
+    </div>
+    <div class="w-msgs">
+      <div class="tb"><b>Inbox</b><small>4 unread</small></div>
+      <div class="m on"><i></i><b>Ana Ribeiro</b><time>9:41</time><span>Flights for the 18th</span><em>Here are both confirmations. Seats are together this time.</em></div>
+      <div class="m"><i></i><b>Hotel Chiado</b><time>8:02</time><span>Your booking is confirmed</span><em>We look forward to welcoming you on October 18.</em></div>
+      <div class="m"><i></i><b>Sam Lee</b><time>Yesterday</time><span>Design review notes</span><em>Two small changes on the pricing page.</em></div>
+    </div>
+    <div class="w-read">
+      <div class="tb"></div>
+      <div class="from"><i>AR</i><span><b>Ana Ribeiro</b><small>To: Me · 9:41</small></span></div>
+      <h4>Flights for the 18th</h4>
+      <p>Here are both confirmations. Seats are together this time, and the return lands early enough for dinner.</p>
+      <p>See you at the airport.</p>
+    </div>
+  </div>
+</template>
+
+<template id="win-music">
+  <div class="w-music">
+    <div class="w-side">
+      <div class="tb"><span class="lights"><i></i><i></i><i></i></span></div>
+      <p class="group-label">Discover</p>
+      <span><svg><use href="/icons.svg#i-play"/></svg>Listen Now</span>
+      <span><svg><use href="/icons.svg#i-radio"/></svg>Radio</span>
+      <p class="group-label">Library</p>
+      <span class="on"><svg><use href="/icons.svg#i-clock"/></svg>Recently Added</span>
+      <span><svg><use href="/icons.svg#i-note"/></svg>Songs</span>
+    </div>
+    <div class="w-main">
+      <div class="tb player"><svg><use href="/icons.svg#i-prev"/></svg><svg class="big"><use href="/icons.svg#i-play"/></svg><svg><use href="/icons.svg#i-next"/></svg><span class="track"><i style="background:#e4572e"></i><span><b>Night Tram</b><small>The Hills</small></span></span></div>
+      <p class="heading">Recently Added</p>
+      <div class="albums">
+        <span><i style="background:#e4572e"><b style="background:#ffd166"></b></i>Night Tram<small>The Hills</small></span>
+        <span><i style="background:#29335c"><b style="background:#f3a712;border-radius:50%"></b></i>Harbour Lights<small>Mira</small></span>
+        <span><i style="background:#2a9d8f"><b style="background:#e9f5db"></b></i>Slow Lunches<small>Ocean Club</small></span>
+        <span><i style="background:#d62828"><b style="background:#fcbf49;border-radius:50%"></b></i>Red Rooftops<small>Ana Lua</small></span>
+      </div>
+    </div>
+  </div>
+</template>

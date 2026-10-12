@@ -1,0 +1,156 @@
+import AppKit
+
+final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWindowDelegate {
+    private var statusItem: NSStatusItem?
+    private var settingsWindow: NSWindow?
+    private var accessibilityTimer: Timer?
+    private var started = false
+    private var signalSources: [DispatchSourceSignal] = []
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        Prefs.register()
+        // Never let a frozen app stall the switcher for long.
+        AXUIElementSetMessagingTimeout(AXUIElementCreateSystemWide(), 0.5)
+        #if DEBUG
+        if Debug.run() { return }
+        #endif
+
+        updateStatusItem()
+        CLI.setEnabled(Prefs.commandLine)
+        if !UserDefaults.standard.bool(forKey: Prefs.Key.didSetUpLoginItem) {
+            UserDefaults.standard.set(true, forKey: Prefs.Key.didSetUpLoginItem)
+            LoginItem.isEnabled = true
+        }
+        // Undo a ⌘Tab takeover left by a crashed run; Switcher.start takes it over again once the tap is live.
+        Private.setNativeCommandTab(enabled: true)
+        restoreCommandTabOnSignals()
+        Updater.shared.start()
+
+        if Permissions.accessibility {
+            start()
+        } else {
+            showSettings()
+            Permissions.requestAccessibility()
+            accessibilityTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+                guard Permissions.accessibility else { return }
+                timer.invalidate()
+                self?.start()
+            }
+        }
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        Private.setNativeCommandTab(enabled: true)
+    }
+
+    /// Quitting from Activity Monitor or `kill` skips applicationWillTerminate; give the system ⌘Tab back anyway.
+    private func restoreCommandTabOnSignals() {
+        for sig in [SIGTERM, SIGINT, SIGHUP] {
+            signal(sig, SIG_IGN)
+            let source = DispatchSource.makeSignalSource(signal: sig, queue: .main)
+            source.setEventHandler {
+                Private.setNativeCommandTab(enabled: true)
+                exit(0)
+            }
+            source.resume()
+            signalSources.append(source)
+        }
+    }
+
+    /// Opening the app again (e.g. from Finder or Spotlight) shows Settings, which matters when the menu bar icon is hidden.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        showSettings()
+        return false
+    }
+
+    private func start() {
+        guard !started else { return }
+        guard Switcher.shared.start() else {
+            // Accessibility can take a moment to apply after being granted.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.start() }
+            return
+        }
+        started = true
+        WindowManager.shared.start()
+        BrowserTabs.shared.start()
+        if Prefs.style == .thumbnails {
+            if Permissions.screenRecording {
+                Thumbnails.shared.capture(WindowManager.shared.currentWindows())
+            } else {
+                Permissions.requestScreenRecording()
+            }
+        }
+    }
+
+    // MARK: Menu bar
+
+    func updateStatusItem() {
+        guard Prefs.showMenuBarIcon else {
+            if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
+            statusItem = nil
+            return
+        }
+        guard statusItem == nil else { return }
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        item.button?.image = NSImage(systemSymbolName: "rectangle.on.rectangle", accessibilityDescription: "GlideTab")
+        let menu = NSMenu()
+        menu.delegate = self
+        item.menu = menu
+        statusItem = item
+    }
+
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        menu.removeAllItems()
+        if !Permissions.accessibility || (Prefs.style == .thumbnails && !Permissions.screenRecording) {
+            let warning = menu.addItem(withTitle: String(localized: "Permissions Needed…"), action: #selector(showSettings), keyEquivalent: "")
+            warning.image = NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: nil)
+            warning.target = self
+            menu.addItem(.separator())
+        }
+        menu.addItem(withTitle: String(localized: "Settings…"), action: #selector(showSettings), keyEquivalent: ",").target = self
+        menu.addItem(withTitle: String(localized: "Check for Updates…"), action: #selector(checkForUpdates), keyEquivalent: "").target = self
+        menu.addItem(withTitle: String(localized: "About GlideTab"), action: #selector(showAbout), keyEquivalent: "").target = self
+        menu.addItem(.separator())
+        menu.addItem(withTitle: String(localized: "Quit GlideTab"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+    }
+
+    @objc func showSettings() {
+        if settingsWindow == nil {
+            let window = SettingsWindow.make()
+            window.delegate = self
+            settingsWindow = window
+        }
+        NSApp.activate()
+        settingsWindow?.makeKeyAndOrderFront(nil)
+    }
+
+    /// Quits and reopens the app. The helper waits for this process to exit, so `open` starts a fresh copy.
+    static func relaunch() {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/bin/sh")
+        task.arguments = ["-c", "while kill -0 \"$1\" 2>/dev/null; do sleep 0.1; done; open \"$0\"",
+                          Bundle.main.bundlePath, String(ProcessInfo.processInfo.processIdentifier)]
+        try? task.run()
+        NSApp.terminate(nil)
+    }
+
+    @objc private func checkForUpdates() {
+        Updater.shared.check(userInitiated: true)
+    }
+
+    @objc private func showAbout() {
+        NSApp.activate()
+        NSApp.orderFrontStandardAboutPanel(options: [
+            .credits: NSAttributedString(string: String(localized: "A lightweight window switcher."),
+                                         attributes: [.font: NSFont.systemFont(ofSize: 11), .foregroundColor: NSColor.secondaryLabelColor]),
+        ])
+    }
+
+    /// Drop the Settings window when closed so nothing in it keeps running in the background.
+    func windowWillClose(_ notification: Notification) {
+        if (notification.object as? NSWindow) === settingsWindow {
+            Switcher.shared.cancelRecording()
+            settingsWindow = nil
+        }
+    }
+}

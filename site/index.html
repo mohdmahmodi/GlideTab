@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GlideTab · Window switcher for Mac</title>
+  <meta name="description" content="GlideTab shows every open window on your Mac with a live preview. Hold Option, press Tab, and switch. Free and open source.">
+  <meta name="theme-color" content="#ececee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#161618" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="GlideTab · Window switcher for Mac">
+  <meta property="og:description" content="Every open window, with a live preview. Hold Option, press Tab, and switch. Free and open source.">
+  <meta property="og:image" content="https://glidetab.com/images/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://glidetab.com/">
+  <meta property="og:url" content="https://glidetab.com/">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/styles.css?v=18">
+  <link rel="stylesheet" href="/demo.css?v=17">
+</head>
+<body>
+
+<header class="menubar">
+  <div class="app-menu" id="app-menu">
+    <button class="app-name" aria-haspopup="true" aria-expanded="false"><img src="/images/icon.png" alt=""> GlideTab</button>
+    <div class="menu" role="menu">
+      <a href="#download" role="menuitem">Download GlideTab</a>
+      <a href="https://github.com/mohdmahmodi/glidetab" role="menuitem">View Source on GitHub</a>
+      <a href="https://github.com/mohdmahmodi/glidetab/releases" role="menuitem">Release Notes</a>
+      <hr>
+      <a href="/privacy" role="menuitem">Privacy</a>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Pages">
+    <a href="/features">Features</a>
+    <a href="/compare">Compare</a>
+    <a href="#faq">Questions</a>
+    <a href="https://github.com/mohdmahmodi/glidetab">GitHub</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="status">
+    <button class="icon" id="theme-toggle" aria-label="Switch between light and dark"><svg><use href="/icons.svg#i-appearance"/></svg></button>
+    <span class="icon" aria-hidden="true"><svg><use href="/icons.svg#i-wifi"/></svg></span>
+    <span class="icon" aria-hidden="true"><svg><use href="/icons.svg#i-battery"/></svg></span>
+    <span class="clock" id="clock" aria-hidden="true"></span>
+  </div>
+  <a class="download" href="https://github.com/mohdmahmodi/glidetab/releases/latest/download/GlideTab.zip">Download</a>
+</header>
+
+<main>
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <h1 id="hero-title">Hold Option. Press Tab.</h1>
+      <p class="lede">Every open window on your Mac, with a live preview. Pick one and you're there. Free and open source.</p>
+      <div class="actions">
+        <a class="cta primary" href="https://github.com/mohdmahmodi/glidetab/releases/latest/download/GlideTab.zip">
+          <svg><use href="/icons.svg#i-download"/></svg>
+          <span><b>Download for Mac</b><small>Version <span data-version>1.0.0</span> · macOS 14 or later</small></span>
+        </a>
+        <a class="cta secondary" href="https://github.com/mohdmahmodi/glidetab">
+          <svg><use href="/icons.svg#i-github"/></svg>
+          <span><b>View on GitHub</b><small>MIT License</small></span>
+        </a>
+      </div>
+      <ul class="trust">
+        <li><svg><use href="/icons.svg#i-check"/></svg>Apple silicon and Intel</li>
+        <li><svg><use href="/icons.svg#i-check"/></svg>Signed and notarized by Apple</li>
+        <li><svg><use href="/icons.svg#i-check"/></svg>No account, no tracking</li>
+        <li><svg><use href="/icons.svg#i-check"/></svg>5 MB</li>
+      </ul>
+
+      <p class="try-line" id="coach-text" role="status">Try it: hold <kbd data-key="option">⌥ Option</kbd>, then press <kbd data-key="tab">Tab</kbd>.</p>
+      <div class="screen" id="hero-screen">
+        <div class="stage-fit" data-stage data-width="1200" data-height="750">
+          <div class="stage" id="hero-stage" style="height:750px">
+            <svg class="wall wall-light" viewBox="0 0 1200 750" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="1200" height="750" fill="#f4d8c3"/>
+              <circle cx="880" cy="250" r="96" fill="#fff1e2"/>
+              <path d="M0 430 C 180 360 320 400 470 370 S 760 300 900 340 S 1120 330 1200 300 V750 H0Z" fill="#ecb595"/>
+              <path d="M0 500 C 160 450 300 480 460 455 S 720 400 880 440 S 1100 430 1200 410 V750 H0Z" fill="#dc8f71"/>
+              <path d="M0 580 C 200 540 340 570 520 545 S 820 500 980 535 S 1140 530 1200 520 V750 H0Z" fill="#bd6a5c"/>
+              <path d="M0 660 C 220 630 380 650 580 630 S 900 600 1060 625 S 1160 620 1200 615 V750 H0Z" fill="#83495a"/>
+            </svg>
+            <svg class="wall wall-dark" viewBox="0 0 1200 750" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="1200" height="750" fill="#1b2136"/>
+              <circle cx="890" cy="200" r="46" fill="#e9e5da"/>
+              <g fill="#e9e5da" opacity=".7"><circle cx="160" cy="110" r="1.6"/><circle cx="340" cy="70" r="1.2"/><circle cx="520" cy="140" r="1.4"/><circle cx="700" cy="90" r="1.1"/><circle cx="1040" cy="120" r="1.5"/><circle cx="1130" cy="260" r="1.2"/><circle cx="250" cy="230" r="1.1"/></g>
+              <path d="M0 430 C 180 360 320 400 470 370 S 760 300 900 340 S 1120 330 1200 300 V750 H0Z" fill="#263154"/>
+              <path d="M0 500 C 160 450 300 480 460 455 S 720 400 880 440 S 1100 430 1200 410 V750 H0Z" fill="#323c68"/>
+              <path d="M0 580 C 200 540 340 570 520 545 S 820 500 980 535 S 1140 530 1200 520 V750 H0Z" fill="#40457a"/>
+              <path d="M0 660 C 220 630 380 650 580 630 S 900 600 1060 625 S 1160 620 1200 615 V750 H0Z" fill="#251f3d"/>
+            </svg>
+            <div class="mini-menubar" aria-hidden="true">
+              <svg class="logo"><use href="/icons.svg#i-window"/></svg>
+              <b id="front-app">Browser</b><span>File</span><span>Edit</span><span>View</span><span>Window</span><span>Help</span>
+              <div class="right"><svg><use href="/icons.svg#i-wifi"/></svg><svg><use href="/icons.svg#i-battery"/></svg><span id="mini-clock"></span></div>
+            </div>
+            <div id="desktop" aria-hidden="true"></div>
+            <div class="dock" id="dock" aria-hidden="true"></div>
+            <div class="panel" id="hero-panel" data-style="thumbnails" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-bar">
+        <span class="touch"><button class="key" data-key="tab" id="tap-tab" aria-label="Tab key. Moves to the next window in the demo."><span class="glyph">⇥</span><span class="name">tab</span></button>Tap Tab to try it</span>
+        <button class="pause" id="demo-pause" aria-pressed="false"><svg><use href="/icons.svg#i-pause"/></svg><span>Pause demo</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="styles" aria-labelledby="styles-title">
+    <div class="wrap">
+      <div class="section-head center">
+        <h2 id="styles-title">Pick a look.</h2>
+        <p>Thumbnails for the full picture, app icons like the Dock, or a compact list. In Auto size, previews grow when only a few windows are open.</p>
+      </div>
+      <div class="style-controls">
+        <div class="segmented" role="group" aria-label="Switcher style">
+          <button aria-pressed="true" data-style-choice="thumbnails">Thumbnails</button>
+          <button aria-pressed="false" data-style-choice="icons">App Icons</button>
+          <button aria-pressed="false" data-style-choice="list">List</button>
+        </div>
+      </div>
+      <div class="desk">
+        <div class="stage-fit" data-stage data-width="1180" data-height="560">
+          <div class="stage" style="width:1180px;height:560px">
+            <div class="panel static" id="styles-panel" data-demo="styles" data-style="thumbnails" style="--cols:4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" aria-labelledby="every-title">
+    <div class="wrap split">
+      <div class="copy">
+        <h2 id="every-title">Every window gets its own spot.</h2>
+        <p>The built-in ⌘Tab switches between apps. GlideTab lists windows, so two browser windows are two choices.</p>
+        <ul class="points">
+          <li><svg><use href="/icons.svg#i-check"/></svg><span>Windows on other Spaces and displays are included.</span></li>
+          <li><svg><use href="/icons.svg#i-check"/></svg><span>Minimized windows and hidden apps can be shown, hidden, or listed last.</span></li>
+          <li><svg><use href="/icons.svg#i-check"/></svg><span>A small badge tells you where each window is.</span></li>
+        </ul>
+      </div>
+      <div class="desk">
+        <div class="stage-fit" data-stage data-width="760" data-height="520">
+          <div class="stage" style="width:760px;height:520px">
+            <div class="panel static" id="badges-panel" data-demo="badges" data-style="thumbnails" style="--cols:3; --cell-w:220px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="find-title">
+    <div class="wrap split reverse">
+      <div class="copy">
+        <h2 id="find-title">Type to find any window or tab.</h2>
+        <p>The search field is always there. Type part of a title or an app name and the list narrows as you go. Open tabs in Safari, Chrome, Brave, Edge, Vivaldi, Firefox and Zen show up too, in every Chrome profile.</p>
+      </div>
+      <div class="desk">
+        <div class="stage-fit" data-stage data-width="760" data-height="520">
+          <div class="stage" style="width:760px;height:520px">
+            <div class="panel static" id="find-panel" data-demo="find" data-style="list" style="--cell-w:620px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="keys-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="keys-title">Your keys. Your trackpad.</h2>
+        <p>Set up the shortcuts you want, or open the switcher with a swipe.</p>
+      </div>
+      <div class="pair">
+        <div class="window">
+          <div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>Shortcuts</div>
+          <div class="window-body">
+            <h3>Up to nine shortcuts</h3>
+            <p>Each one has its own keys and filters. Use one for every window, another for the app in front, and take over ⌘Tab if you like.</p>
+            <div class="shortcut-rows">
+              <div class="shortcut-row"><span class="key wide"><span class="glyph">⌥</span><span class="name">option</span></span><span class="plus">+</span><span class="key"><span class="glyph">⇥</span><span class="name">tab</span></span><span class="popup">All Apps<svg><use href="/icons.svg#i-updown"/></svg></span></div>
+              <div class="shortcut-row"><span class="key wide"><span class="glyph">⌘</span><span class="name">command</span></span><span class="plus">+</span><span class="key"><span class="glyph">⇥</span><span class="name">tab</span></span><span class="popup">Active App<svg><use href="/icons.svg#i-updown"/></svg></span></div>
+              <div class="shortcut-row"><span class="key wide"><span class="glyph">⌃</span><span class="name">control</span></span><span class="plus">+</span><span class="key"><span class="center">`</span></span><span class="popup">Current Space<svg><use href="/icons.svg#i-updown"/></svg></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="window">
+          <div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>Trackpad</div>
+          <div class="window-body">
+            <h3>Or swipe</h3>
+            <p>Swipe sideways with three or four fingers to open the switcher and move through windows. Lift your fingers to switch.</p>
+            <div class="trackpad-demo" data-demo="trackpad" aria-hidden="true">
+              <div class="trackpad"><div class="fingers"><i></i><i></i><i></i></div></div>
+              <div class="strip"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="privacy-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="privacy-title">Private, and open source.</h2>
+        <p>No account, no tracking, and no paid version. Read the code, or build it yourself with one command.</p>
+      </div>
+      <div class="pair">
+        <div class="window">
+          <div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>Privacy</div>
+          <div class="window-body">
+            <h3>Your windows stay on your Mac.</h3>
+            <ul class="privacy-list">
+              <li><span class="tile" style="background:#8e8e93"><svg><use href="/icons.svg#i-person-off"/></svg></span><span><b>No account and no analytics</b>GlideTab doesn't know who you are and doesn't count anything.</span></li>
+              <li><span class="tile" style="background:#007aff"><svg><use href="/icons.svg#i-chip"/></svg></span><span><b>Kept in memory</b>Window titles, tab titles and previews are never saved to disk or sent anywhere.</span></li>
+              <li><span class="tile" style="background:#34c759"><svg><use href="/icons.svg#i-network"/></svg></span><span><b>One network request</b>The daily update check to GitHub, which you can turn off.</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="window terminal">
+          <div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>glidetab · zsh</div>
+          <pre id="terminal" aria-label="Building GlideTab from source: git clone, then ./build.sh install"><span class="prompt">~ %</span> <span class="cursor"></span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="More about GlideTab">
+    <div class="wrap more">
+      <a href="/features">
+        <span class="tile" style="background:#007aff"><svg><use href="/icons.svg#i-sparkle"/></svg></span>
+        <span><b>Every feature</b><span>Search, styles, shortcuts, filters, gestures and the rest, in detail.</span></span>
+        <svg class="chev"><use href="/icons.svg#i-chevron"/></svg>
+      </a>
+      <a href="/compare">
+        <span class="tile" style="background:#636366"><svg><use href="/icons.svg#i-compare"/></svg></span>
+        <span><b>Compare with AltTab</b><span>A side-by-side chart with AltTab and AltTab Pro.</span></span>
+        <svg class="chev"><use href="/icons.svg#i-chevron"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <section id="faq" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="section-head center">
+        <h2 id="faq-title">Questions</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary><svg><use href="/icons.svg#i-chevron"/></svg>Is GlideTab really free?</summary>
+          <div class="answer"><p>Yes. There's no paid version, no trial and no account. The source code is on GitHub under the MIT License.</p></div>
+        </details>
+        <details>
+          <summary><svg><use href="/icons.svg#i-chevron"/></svg>Which Macs does it run on?</summary>
+          <div class="answer"><p>Any Mac with macOS 14 Sonoma or later, with Apple silicon or an Intel processor.</p></div>
+        </details>
+        <details>
+          <summary><svg><use href="/icons.svg#i-chevron"/></svg>Why does it ask for Accessibility and Screen Recording?</summary>
+          <div class="answer"><p>Accessibility lets GlideTab read the shortcut keys and bring a window to the front. Screen Recording is for the thumbnails and the full-size preview. The App Icons and List styles work without it.</p></div>
+        </details>
+        <details>
+          <summary><svg><use href="/icons.svg#i-chevron"/></svg>Can it replace ⌘Tab?</summary>
+          <div class="answer"><p>Yes. Set one of your shortcuts to ⌘ Command and Tab. GlideTab turns the built-in switcher off while it runs and turns it back on when you quit.</p></div>
+        </details>
+        <details>
+          <summary><svg><use href="/icons.svg#i-chevron"/></svg>Is it on the Mac App Store?</summary>
+          <div class="answer"><p>No. App Store apps run in a sandbox that doesn't allow switching to a specific window on another Space, which is the main thing GlideTab does. Downloads here are signed and notarized by Apple.</p></div>
+        </details>
+        <details>
+          <summary><svg><use href="/icons.svg#i-chevron"/></svg>How do I uninstall it?</summary>
+          <div class="answer"><p>Quit GlideTab from its menu bar icon, then move it from Applications to the Trash. If it's still listed in System Settings under General, Login Items, remove it there.</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <div class="dialog-wrap" id="download">
+    <div class="dialog" role="group" aria-labelledby="dl-title">
+      <img src="/images/icon.png" alt="" width="88" height="88">
+      <h2 id="dl-title">Download GlideTab</h2>
+      <p>Version <span data-version>1.0.0</span> for macOS 14 or later.<br>Free, about 5 MB.</p>
+      <div class="buttons">
+        <a class="button secondary" href="https://github.com/mohdmahmodi/glidetab">View Source</a>
+        <a class="button primary" href="https://github.com/mohdmahmodi/glidetab/releases/latest/download/GlideTab.zip">Download</a>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Mohd Mahmodi. GlideTab is released under the MIT License.</span>
+    <nav aria-label="Footer">
+      <a href="/features">Features</a>
+      <a href="/compare">Compare</a>
+      <a href="/privacy">Privacy</a>
+      <a href="https://github.com/mohdmahmodi/glidetab/releases">Releases</a>
+      <a href="https://github.com/mohdmahmodi/glidetab">GitHub</a>
+      <a href="https://x.com/mohdmahmodi">X</a>
+      <a href="https://mohdmahmodi.com">mohdmahmodi.com</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js" integrity="sha384-CHvG5TSBYWY4gs18D+se5IrGOZ6r8JlhAWob7LbkaUcfqD8PWzaYz2pqZdH7LsXQ" crossorigin="anonymous" defer></script>
+<script src="/site.js?v=17" defer></script>
+<script src="/app.js?v=17" defer></script>
+</body>
+</html>

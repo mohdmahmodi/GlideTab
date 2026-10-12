@@ -1,0 +1,46 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open …\n2. Press ⌥Tab …"
+  - type: input
+    id: version
+    attributes:
+      label: GlideTab version
+      description: Settings → General, or `glidetab version`
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "e.g. macOS 15.6"
+    validations:
+      required: true
+  - type: input
+    id: mac
+    attributes:
+      label: Mac
+      placeholder: "e.g. MacBook Air M2, or iMac Intel 2019"
+  - type: dropdown
+    id: style
+    attributes:
+      label: Switcher style
+      options: [Thumbnails, App Icons, List]
+  - type: textarea
+    id: list
+    attributes:
+      label: Window list (optional)
+      description: For missing or extra windows, paste the output of `glidetab list`. Remove anything private.
+      render: text
