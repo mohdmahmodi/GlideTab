@@ -45,3 +45,8 @@ Then open http://localhost:8787.
 - After changing a CSS or JavaScript file, bump the `?v=` number where it's linked, so browsers fetch the new file.
 - The demo windows are HTML templates in `windows.html`. The desktop and every switcher thumbnail are drawn from them, so a change to a window shows up everywhere.
 - Comparison data lives at the top of `compare.js`. Update it there and both the side-by-side view and the full chart follow.
+
+## Images
+
+- `images/wallpaper.jpg`, the demo desktop's wallpaper, is a photo from [Unsplash](https://unsplash.com/photos/1506905925346-21bda4d32df4), used under the [Unsplash License](https://unsplash.com/license) (free to use, no attribution required).
+- Everything else, including the app icons in the demo, is drawn for this site.

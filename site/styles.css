@@ -1664,19 +1664,9 @@ footer a:hover {
   inset: 0;
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
 }
-
-.wall-dark {
-  display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .wall-light { display: none; }
-  :root:not([data-theme="light"]) .wall-dark { display: block; }
-}
-
-:root[data-theme="dark"] .wall-light { display: none; }
-:root[data-theme="dark"] .wall-dark { display: block; }
 
 .page-head.center {
   margin-inline: auto;
