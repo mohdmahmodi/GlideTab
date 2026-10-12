@@ -274,7 +274,11 @@
   if (!document.getElementById("win-browser")) {
     const holder = document.createElement("div");
     holder.hidden = true;
-    holder.innerHTML = await fetch("/windows.html").then((response) => response.text());
+    try {
+      holder.innerHTML = await fetch("/windows.html").then((response) => response.text());
+    } catch {
+      return; // without the windows there's nothing to demo; the rest of the page still works
+    }
     document.body.append(holder);
   }
 
