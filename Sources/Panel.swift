@@ -394,7 +394,7 @@ private final class ItemCell: NSView {
 
     private let style: SwitcherStyle
     private let thumbArea: CGRect
-    private let thumbView = NSView()
+    private let thumbView = FlippedView()
     private let title = NSTextField(labelWithString: "")
     private let subtitle = NSTextField(labelWithString: "")
     private let icon = NSImageView()
@@ -494,6 +494,11 @@ private final class ItemCell: NSView {
             layer?.borderColor = NSColor.controlAccentColor.cgColor
             layer?.borderWidth = isSelected ? 2.5 : 0
         }
+        if style == .thumbnails && !hasThumbnail {
+            thumbView.layer?.backgroundColor = NSColor.labelColor.withAlphaComponent(0.06).cgColor
+            thumbView.layer?.borderColor = NSColor.labelColor.withAlphaComponent(0.08).cgColor
+            thumbView.layer?.borderWidth = 1
+        }
     }
 
     override func accessibilityPerformPress() -> Bool {
@@ -516,7 +521,6 @@ private final class ItemCell: NSView {
         })
         toolTip = item.subtitle().isEmpty ? item.title : "\(item.title)\n\(item.subtitle())"
         setAccessibilityLabel(item.accessibilityLabel)
-        thumbView.alphaValue = item.isMinimized || item.app.isHidden ? 0.55 : 1
         updateBadges()
         applyText()
         layoutContent()
@@ -568,6 +572,8 @@ private final class ItemCell: NSView {
     func setThumbnail(_ image: CGImage) {
         hasThumbnail = true
         thumbView.subviews.forEach { $0.removeFromSuperview() }
+        thumbView.layer?.backgroundColor = nil
+        thumbView.layer?.borderWidth = 0
         thumbView.layer?.contents = image
         // Fit the view to the image so the rounded corners land on the image itself.
         let fit = min(thumbArea.width / CGFloat(image.width), thumbArea.height / CGFloat(image.height))
@@ -577,12 +583,35 @@ private final class ItemCell: NSView {
     }
 
     private func showIcon(_ image: NSImage?) {
-        let side = style == .thumbnails ? min(64, thumbArea.height * 0.6) : thumbArea.width
-        thumbView.frame = CGRect(x: thumbArea.midX - side / 2, y: thumbArea.midY - side / 2, width: side, height: side)
-        let imageView = NSImageView(frame: thumbView.bounds)
+        guard style == .thumbnails else {
+            thumbView.frame = thumbArea
+            let imageView = NSImageView(frame: thumbView.bounds)
+            imageView.image = image
+            imageView.imageScaling = .scaleProportionallyUpOrDown
+            thumbView.addSubview(imageView)
+            return
+        }
+        // No picture (a background tab, or a window macOS isn't drawing): a plain card with the app icon,
+        // and the site for tabs, so it reads as deliberate rather than missing.
+        thumbView.frame = thumbArea
+        let host = item.isTab ? item.subtitle() : ""
+        let side = min(56, thumbArea.height * 0.5)
+        let textHeight: CGFloat = host.isEmpty ? 0 : 22
+        let imageView = NSImageView(frame: CGRect(x: (thumbArea.width - side) / 2, y: (thumbArea.height - side - textHeight) / 2,
+                                                  width: side, height: side))
         imageView.image = image
         imageView.imageScaling = .scaleProportionallyUpOrDown
         thumbView.addSubview(imageView)
+        if !host.isEmpty {
+            let label = NSTextField(labelWithString: host)
+            label.font = .systemFont(ofSize: 11.5)
+            label.textColor = .secondaryLabelColor
+            label.alignment = .center
+            label.lineBreakMode = .byTruncatingMiddle
+            label.frame = CGRect(x: 10, y: imageView.frame.maxY + 6, width: thumbArea.width - 20, height: 16)
+            thumbView.addSubview(label)
+        }
+        needsDisplay = true
     }
 
     /// Small symbols marking tabs, minimized windows, hidden apps and windows on another Space.

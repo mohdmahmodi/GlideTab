@@ -29,6 +29,8 @@ enum Debug {
 
         if args.contains("--dump") {
             dump()
+        } else if args.contains("--probe-capture") {
+            probeCapture()
         } else if args.contains("--stress") {
             // From a timer, not a main-queue block: the test spins the run loop, and main-queue work can't
             // run while another main-queue block is executing.
@@ -70,6 +72,54 @@ enum Debug {
         }
     }
 
+    /// Tries a thumbnail capture of every window and reports which ones fail or come back blank, and why.
+    private static func probeCapture() {
+        print("screen recording: \(Permissions.screenRecording)")
+        let windows = WindowManager.shared.currentWindows()
+        SCShareableContent.getExcludingDesktopWindows(true, onScreenWindowsOnly: false) { content, error in
+            var byID: [CGWindowID: SCWindow] = [:]
+            for w in content?.windows ?? [] { byID[w.windowID] = w }
+            if let error { print("shareable content error: \(error)") }
+            let group = DispatchGroup()
+            var lines: [String] = []
+            let lock = NSLock()
+            for info in windows {
+                let state = [info.isMinimized ? "minimized" : nil, info.app.isHidden ? "hidden" : nil,
+                             info.isOnOtherSpace ? "other-space" : nil].compactMap { $0 }.joined(separator: ",")
+                let head = "\(info.appName.padding(toLength: 18, withPad: " ", startingAt: 0)) \(String(info.title.prefix(30)).padding(toLength: 30, withPad: " ", startingAt: 0)) \(state.isEmpty ? "visible" : state)"
+                guard let sc = byID[info.id] else {
+                    lines.append("\(head)  -> not in shareable list"); continue
+                }
+                group.enter()
+                let config = SCStreamConfiguration()
+                config.width = 300; config.height = 200; config.showsCursor = false
+                SCScreenshotManager.captureImage(contentFilter: SCContentFilter(desktopIndependentWindow: sc), configuration: config) { image, error in
+                    let result: String
+                    if let image { result = isBlank(image) ? "BLANK image" : "ok" } else { result = "FAILED \(error?.localizedDescription ?? "")" }
+                    lock.lock(); lines.append("\(head)  onScreen=\(sc.isOnScreen)  -> \(result)"); lock.unlock()
+                    group.leave()
+                }
+            }
+            group.notify(queue: .main) {
+                lines.sorted().forEach { print($0) }
+                exit(0)
+            }
+        }
+    }
+
+    /// True if every sampled pixel is the same (fully transparent or one flat color).
+    private static func isBlank(_ image: CGImage) -> Bool {
+        guard let data = image.dataProvider?.data, let bytes = CFDataGetBytePtr(data) else { return true }
+        let length = CFDataGetLength(data), stride = max(4, (length / 4 / 2000) * 4)
+        let first = (bytes[0], bytes[1], bytes[2], bytes[3])
+        var i = 0
+        while i + 3 < length {
+            if abs(Int(bytes[i]) - Int(first.0)) > 6 || abs(Int(bytes[i + 1]) - Int(first.1)) > 6 || abs(Int(bytes[i + 2]) - Int(first.2)) > 6 { return false }
+            i += stride
+        }
+        return true
+    }
+
     private static func snapshot(to path: String, args: [String], tab: Int?, query: String) {
         if let image = value("--backdrop") { showBackdrop(image) }
         let only = value("--only").map { Set($0.split(separator: ",").map(String.init)) }
@@ -82,6 +132,27 @@ enum Debug {
                 let screen = NSScreen.main!
                 let frame = NSWindow(contentRect: screen.frame.insetBy(dx: 30, dy: 30), styleMask: .borderless, backing: .buffered, defer: true)
                 capture(frame, to: path, screen: screen)
+            }
+            return
+        }
+        if args.contains("--placeholders") {
+            // Cells without pictures (as on a Mac without Screen Recording), drawn from the view itself.
+            let apps = NSWorkspace.shared.runningApplications.filter { $0.activationPolicy == .regular }
+            func app(_ id: String) -> NSRunningApplication { apps.first { $0.bundleIdentifier == id } ?? apps[0] }
+            let finder = app("com.apple.finder"), browser = app("com.google.Chrome")
+            let items: [SwitcherItem] = [
+                .window(WindowInfo(id: 900_001, app: finder, title: "Documents", ax: nil, isMinimized: false, isOnOtherSpace: false)),
+                .window(WindowInfo(id: 900_002, app: finder, title: "Downloads", ax: nil, isMinimized: true, isOnOtherSpace: false)),
+                .tab(BrowserTab(app: browser, title: "Pull requests", url: "https://github.com/pulls", handle: .script(windowID: "1", index: 2, tabID: nil))),
+                .tab(BrowserTab(app: browser, title: "A very long article title that goes on", url: "https://www.example.com/a", handle: .script(windowID: "1", index: 3, tabID: nil))),
+            ]
+            let panel = SwitcherPanel()
+            panel.present(items, selected: 1, query: "", total: items.count, style: .thumbnails, on: NSScreen.main!)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                guard let view = panel.contentView, let bitmap = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { exit(1) }
+                view.cacheDisplay(in: view.bounds, to: bitmap)
+                try? bitmap.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))
+                exit(0)
             }
             return
         }
