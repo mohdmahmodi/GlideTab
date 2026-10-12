@@ -36,23 +36,35 @@ enum Onboarding {
     }
 
     static func makeWindow(onFinish: @escaping () -> Void) -> NSWindow {
-        let controller = NSHostingController(rootView: OnboardingView(onFinish: onFinish))
-        controller.sizingOptions = []
-        let window = NSWindow(contentViewController: controller)
-        window.styleMask = [.titled, .closable, .fullSizeContentView]
+        let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 600, height: 540),
+                              styleMask: [.titled, .closable, .fullSizeContentView], backing: .buffered, defer: false)
+        let bringToFront = { [weak window] in
+            NSApp.activate()
+            window?.makeKeyAndOrderFront(nil)
+        }
+        let host = FirstClickHostingView(rootView: OnboardingView(onFinish: onFinish, bringToFront: bringToFront))
+        host.sizingOptions = [] // Fixed size; don't let SwiftUI resize the window.
+        window.contentView = host
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
         window.title = String(localized: "Welcome to GlideTab")
-        window.isMovableByWindowBackground = true
         window.isReleasedWhenClosed = false
-        window.setContentSize(CGSize(width: 600, height: 540))
+        // The content runs under the transparent title bar, so the whole frame is the layout's size.
+        window.setFrame(CGRect(x: 0, y: 0, width: 600, height: 540), display: false)
         window.center()
         return window
     }
 }
 
+/// People come back to this window from System Settings, so it's usually inactive: the first click
+/// should press the button, not just bring the window forward.
+private final class FirstClickHostingView<Content: View>: NSHostingView<Content> {
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+}
+
 private struct OnboardingView: View {
     let onFinish: () -> Void
+    let bringToFront: () -> Void
     @State private var step = Onboarding.step == .done ? .ready : Onboarding.step
     @State private var accessibility = Permissions.accessibility
     @State private var screenRecording = Permissions.screenRecording
@@ -60,6 +72,8 @@ private struct OnboardingView: View {
     @State private var launchAtLogin = !UserDefaults.standard.bool(forKey: Prefs.Key.didSetUpLoginItem) || LoginItem.isEnabled
     @State private var askedForAccessibility = false
     @State private var askedForScreenRecording = false
+    /// Set once the Accessibility step has moved on by itself, so going Back to it doesn't bounce forward again.
+    @State private var autoAdvanced = false
     private let poll = Timer.publish(every: 0.6, on: .main, in: .common).autoconnect()
 
     private var pages: [Onboarding.Step] { [.welcome, .accessibility, .previews, .ready] }
@@ -243,12 +257,13 @@ private struct OnboardingView: View {
     }
 
     private func refresh() {
-        let wasAllowed = accessibility
         accessibility = Permissions.accessibility
         screenRecording = Permissions.screenRecording
-        // Move on by itself once Accessibility is turned on, and bring this window back to the front.
-        if step == .accessibility && accessibility && !wasAllowed {
-            NSApp.activate()
+        // Move on by itself once Accessibility is on, whether it was just turned on or already was when this
+        // window opened, and bring the window back in front of System Settings.
+        if step == .accessibility && accessibility && !autoAdvanced {
+            autoAdvanced = true
+            bringToFront()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { if step == .accessibility { go(1) } }
         }
     }

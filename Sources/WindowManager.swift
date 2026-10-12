@@ -107,6 +107,9 @@ final class WindowManager {
     /// Apps that recently didn't answer Accessibility in time: skipped (window server data only) for a while.
     private var slowApps: [pid_t: Date] = [:]
     private static let axTimeout: Float = 0.15
+    /// Never ask our own process over Accessibility from the main thread: the answer has to come from that same
+    /// thread, so the call can block until it times out, or for good on some macOS versions.
+    private static let ownPID = ProcessInfo.processInfo.processIdentifier
     private let axQueue = DispatchQueue(label: "GlideTab.ax", qos: .userInteractive)
 
     func start() {
@@ -128,9 +131,11 @@ final class WindowManager {
     private func noteFocusedWindow(of app: NSRunningApplication) {
         // Rapid ⌥Tab toggling: this notification can arrive after you've already switched on again. Only an app
         // that's still in front, activated by something other than us, may reorder the history.
-        guard app.isActive, Date().timeIntervalSince(lastFocusRequest) > 0.6 else { return }
+        guard app.isActive, app.processIdentifier != Self.ownPID, Date().timeIntervalSince(lastFocusRequest) > 0.6 else { return }
         let previous = mru.first
-        guard let id = AXUIElementCreateApplication(app.processIdentifier).element(kAXFocusedWindowAttribute)?.windowID else { return }
+        let element = AXUIElementCreateApplication(app.processIdentifier)
+        AXUIElementSetMessagingTimeout(element, Self.axTimeout)
+        guard let id = element.element(kAXFocusedWindowAttribute)?.windowID else { return }
         touch(id)
         // Optionally refresh the thumbnail of the window we just left, so it stays current on other Spaces.
         if Prefs.backgroundCapture, let previous, previous != id {
@@ -256,7 +261,7 @@ final class WindowManager {
 
         // If focus changed without us (a click, Mission Control, the Dock), put the really focused window first.
         if Date().timeIntervalSince(lastFocusRequest) > 0.6, let front = NSWorkspace.shared.frontmostApplication,
-           slowApps[front.processIdentifier] == nil {
+           front.processIdentifier != Self.ownPID, slowApps[front.processIdentifier] == nil {
             let element = AXUIElementCreateApplication(front.processIdentifier)
             AXUIElementSetMessagingTimeout(element, Self.axTimeout)
             if let focused = element.element(kAXFocusedWindowAttribute)?.windowID, result[focused] != nil, focused != mru.first {

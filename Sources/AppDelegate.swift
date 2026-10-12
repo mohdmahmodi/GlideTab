@@ -67,6 +67,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
 
     private func start() {
         guard !started else { return }
+        // Set again now that Accessibility is on: on a first launch, the call at startup came before it was.
+        AXUIElementSetMessagingTimeout(AXUIElementCreateSystemWide(), 0.5)
         guard Switcher.shared.start() else {
             // Accessibility can take a moment to apply after being granted.
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.start() }
