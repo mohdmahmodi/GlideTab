@@ -109,7 +109,7 @@ final class Updater {
         alert.addButton(withTitle: String(localized: "Later"))
         guard alert.runModal() == .alertFirstButtonReturn else { return }
         // A copy running from Downloads can't replace itself. Move it first; the moved copy offers the update again.
-        if AppMover.isOutsideApplications || !FileManager.default.isWritableFile(atPath: Bundle.main.bundleURL.deletingLastPathComponent().path) {
+        if AppMover.isOutsideApplications {
             _ = AppMover.offer(String(localized: "GlideTab needs to be in the Applications folder to install updates."))
             return
         }

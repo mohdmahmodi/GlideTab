@@ -31,6 +31,10 @@ enum Debug {
             dump()
         } else if args.contains("--probe-capture") {
             probeCapture()
+        } else if args.contains("--move") {
+            // Runs the move to Applications without the dialog or the relaunch, and reports where it went.
+            print(AppMover.move()?.path ?? "move failed")
+            exit(0)
         } else if args.contains("--stress") {
             // From a timer, not a main-queue block: the test spins the run loop, and main-queue work can't
             // run while another main-queue block is executing.

@@ -15,6 +15,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         #if DEBUG
         if Debug.run() { return }
         #endif
+        // A second copy (say, a new download opened while the old one runs) hands over to the first and quits.
+        if let other = AppMover.otherInstances.first {
+            // Only an established copy gets the reopen, so two fresh copies can't keep launching each other.
+            if let url = other.bundleURL, (other.launchDate ?? .distantPast) < Date(timeIntervalSinceNow: -3) {
+                NSWorkspace.shared.open(url)
+            }
+            NSApp.terminate(nil)
+            return
+        }
         // Opened straight from Downloads: offer to move to Applications first, where updates can install.
         if AppMover.offerAtLaunch() { return }
 

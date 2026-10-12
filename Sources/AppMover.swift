@@ -41,8 +41,9 @@ enum AppMover {
     }
 
     /// Copies the running app into Applications (or ~/Applications if that isn't writable) and moves the
-    /// original to the Trash. Returns the new location.
-    private static func move() -> URL? {
+    /// original to the Trash. Returns the new location. If a copy in Applications is already running, that one
+    /// is used as is.
+    static func move() -> URL? {
         let fm = FileManager.default
         let source = Bundle.main.bundleURL
         let name = source.lastPathComponent
@@ -50,6 +51,12 @@ enum AppMover {
                        fm.homeDirectoryForCurrentUser.appendingPathComponent("Applications")]
         for folder in folders {
             let destination = folder.appendingPathComponent(name)
+            // A copy that's already running, or at least as new as this one, is used as is.
+            if isRunning(destination) { return destination }
+            if let there = Bundle(url: destination), buildNumber(there) >= buildNumber(.main) {
+                trashOriginal(unless: destination)
+                return destination
+            }
             do {
                 try fm.createDirectory(at: folder, withIntermediateDirectories: true)
                 if fm.fileExists(atPath: destination.path) { try fm.trashItem(at: destination, resultingItemURL: nil) }
@@ -64,12 +71,37 @@ enum AppMover {
             xattr.arguments = ["-dr", "com.apple.quarantine", destination.path]
             try? xattr.run()
             xattr.waitUntilExit()
-            if let original = originalURL, original.standardizedFileURL != destination.standardizedFileURL {
-                try? fm.trashItem(at: original, resultingItemURL: nil)
-            }
+            trashOriginal(unless: destination)
             return destination
         }
         return nil
+    }
+
+    private static func buildNumber(_ bundle: Bundle) -> Int {
+        Int(bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "") ?? 0
+    }
+
+    /// Moves the copy this app was opened from to the Trash. macOS may ask for access to Downloads first; if
+    /// that's declined, the copy stays and the move still counts.
+    private static func trashOriginal(unless destination: URL) {
+        guard let original = originalURL, original.standardizedFileURL != destination.standardizedFileURL else { return }
+        do {
+            try FileManager.default.trashItem(at: original, resultingItemURL: nil)
+        } catch {
+            NSLog("GlideTab: couldn't move the original to the Trash: %@", error.localizedDescription)
+        }
+    }
+
+    /// Another GlideTab process running from `url`.
+    static func isRunning(_ url: URL) -> Bool {
+        otherInstances.contains { $0.bundleURL?.standardizedFileURL == url.standardizedFileURL }
+    }
+
+    /// Other running copies of GlideTab, whatever folder they're in.
+    static var otherInstances: [NSRunningApplication] {
+        guard let id = Bundle.main.bundleIdentifier else { return [] }
+        let me = ProcessInfo.processInfo.processIdentifier
+        return NSRunningApplication.runningApplications(withBundleIdentifier: id).filter { $0.processIdentifier != me }
     }
 
     /// Where a translocated app really is (e.g. ~/Downloads/GlideTab.app), or the app itself if it isn't translocated.
