@@ -277,5 +277,10 @@
  "Done",
  "Back",
  "Skip",
- "Couldn't reach GitHub. Check your internet connection and try again."
+ "Couldn't reach GitHub. Check your internet connection and try again.",
+ "Move GlideTab to Applications?",
+ "GlideTab works best from the Applications folder. There it can update itself, and it stays put when you clean up Downloads.",
+ "Move to Applications",
+ "GlideTab couldn't be moved. Drag it to the Applications folder in Finder, then open it from there.",
+ "GlideTab needs to be in the Applications folder to install updates."
 ]

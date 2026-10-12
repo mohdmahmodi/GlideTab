@@ -15,6 +15,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         #if DEBUG
         if Debug.run() { return }
         #endif
+        // Opened straight from Downloads: offer to move to Applications first, where updates can install.
+        if AppMover.offerAtLaunch() { return }
 
         updateStatusItem()
         CLI.setEnabled(Prefs.commandLine)
@@ -132,12 +134,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         onboardingWindow?.makeKeyAndOrderFront(nil)
     }
 
-    /// Quits and reopens the app. The helper waits for this process to exit, so `open` starts a fresh copy.
-    static func relaunch() {
+    /// Quits and reopens the app (from `url`, if it moved). The helper waits for this process to exit, so `open`
+    /// starts a fresh copy.
+    static func relaunch(at url: URL = Bundle.main.bundleURL) {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/bin/sh")
         task.arguments = ["-c", "while kill -0 \"$1\" 2>/dev/null; do sleep 0.1; done; open \"$0\"",
-                          Bundle.main.bundlePath, String(ProcessInfo.processInfo.processIdentifier)]
+                          url.path, String(ProcessInfo.processInfo.processIdentifier)]
         try? task.run()
         NSApp.terminate(nil)
     }

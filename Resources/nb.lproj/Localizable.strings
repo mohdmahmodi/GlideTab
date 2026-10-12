@@ -277,3 +277,8 @@
 "Back" = "Tilbake";
 "Skip" = "Hopp over";
 "Couldn't reach GitHub. Check your internet connection and try again." = "Kunne ikke nå GitHub. Sjekk internettforbindelsen og prøv igjen.";
+"Move GlideTab to Applications?" = "Flytte GlideTab til Programmer?";
+"GlideTab works best from the Applications folder. There it can update itself, and it stays put when you clean up Downloads." = "GlideTab fungerer best fra Programmer-mappen. Der kan den oppdatere seg selv, og den forsvinner ikke når du rydder i Nedlastinger.";
+"Move to Applications" = "Flytt til Programmer";
+"GlideTab couldn't be moved. Drag it to the Applications folder in Finder, then open it from there." = "GlideTab kunne ikke flyttes. Dra den til Programmer-mappen i Finder, og åpne den derfra.";
+"GlideTab needs to be in the Applications folder to install updates." = "GlideTab må ligge i Programmer-mappen for å installere oppdateringer.";

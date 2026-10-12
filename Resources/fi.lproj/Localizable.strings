@@ -277,3 +277,8 @@
 "Back" = "Takaisin";
 "Skip" = "Ohita";
 "Couldn't reach GitHub. Check your internet connection and try again." = "GitHubiin ei saatu yhteyttä. Tarkista internetyhteys ja yritä uudelleen.";
+"Move GlideTab to Applications?" = "Siirretäänkö GlideTab Ohjelmat-kansioon?";
+"GlideTab works best from the Applications folder. There it can update itself, and it stays put when you clean up Downloads." = "GlideTab toimii parhaiten Ohjelmat-kansiosta. Sieltä se voi päivittää itsensä, eikä se katoa, kun siivoat Lataukset-kansion.";
+"Move to Applications" = "Siirrä Ohjelmiin";
+"GlideTab couldn't be moved. Drag it to the Applications folder in Finder, then open it from there." = "GlideTabia ei voitu siirtää. Vedä se Finderissa Ohjelmat-kansioon ja avaa se sieltä.";
+"GlideTab needs to be in the Applications folder to install updates." = "GlideTabin täytyy olla Ohjelmat-kansiossa, jotta se voi asentaa päivityksiä.";

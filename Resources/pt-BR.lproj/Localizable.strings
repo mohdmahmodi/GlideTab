@@ -277,3 +277,8 @@
 "Back" = "Voltar";
 "Skip" = "Pular";
 "Couldn't reach GitHub. Check your internet connection and try again." = "Não foi possível acessar o GitHub. Verifique sua conexão com a internet e tente novamente.";
+"Move GlideTab to Applications?" = "Mover o GlideTab para Aplicativos?";
+"GlideTab works best from the Applications folder. There it can update itself, and it stays put when you clean up Downloads." = "O GlideTab funciona melhor a partir da pasta Aplicativos. Lá ele pode se atualizar sozinho e não some quando você limpa Downloads.";
+"Move to Applications" = "Mover para Aplicativos";
+"GlideTab couldn't be moved. Drag it to the Applications folder in Finder, then open it from there." = "Não foi possível mover o GlideTab. Arraste-o para a pasta Aplicativos no Finder e abra-o de lá.";
+"GlideTab needs to be in the Applications folder to install updates." = "O GlideTab precisa estar na pasta Aplicativos para instalar atualizações.";

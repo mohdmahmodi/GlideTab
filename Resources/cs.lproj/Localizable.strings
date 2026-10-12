@@ -277,3 +277,8 @@
 "Back" = "Zpět";
 "Skip" = "Přeskočit";
 "Couldn't reach GitHub. Check your internet connection and try again." = "Nelze se spojit s GitHubem. Zkontrolujte připojení k internetu a zkuste to znovu.";
+"Move GlideTab to Applications?" = "Přesunout GlideTab do složky Aplikace?";
+"GlideTab works best from the Applications folder. There it can update itself, and it stays put when you clean up Downloads." = "GlideTab funguje nejlépe ze složky Aplikace. Odtud se může sám aktualizovat a nezmizí, když uklidíte Stažené soubory.";
+"Move to Applications" = "Přesunout do Aplikací";
+"GlideTab couldn't be moved. Drag it to the Applications folder in Finder, then open it from there." = "GlideTab se nepodařilo přesunout. Přetáhněte ho ve Finderu do složky Aplikace a otevřete ho odtamtud.";
+"GlideTab needs to be in the Applications folder to install updates." = "Pro instalaci aktualizací musí být GlideTab ve složce Aplikace.";

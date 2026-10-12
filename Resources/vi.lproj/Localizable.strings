@@ -277,3 +277,8 @@
 "Back" = "Quay lại";
 "Skip" = "Bỏ qua";
 "Couldn't reach GitHub. Check your internet connection and try again." = "Không thể kết nối với GitHub. Hãy kiểm tra kết nối Internet và thử lại.";
+"Move GlideTab to Applications?" = "Di chuyển GlideTab vào thư mục Ứng dụng?";
+"GlideTab works best from the Applications folder. There it can update itself, and it stays put when you clean up Downloads." = "GlideTab hoạt động tốt nhất từ thư mục Ứng dụng. Ở đó ứng dụng có thể tự cập nhật và không biến mất khi bạn dọn dẹp thư mục Tải về.";
+"Move to Applications" = "Di chuyển vào Ứng dụng";
+"GlideTab couldn't be moved. Drag it to the Applications folder in Finder, then open it from there." = "Không thể di chuyển GlideTab. Hãy kéo ứng dụng vào thư mục Ứng dụng trong Finder rồi mở từ đó.";
+"GlideTab needs to be in the Applications folder to install updates." = "GlideTab cần nằm trong thư mục Ứng dụng để cài đặt bản cập nhật.";

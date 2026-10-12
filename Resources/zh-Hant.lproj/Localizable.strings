@@ -277,3 +277,8 @@
 "Back" = "返回";
 "Skip" = "略過";
 "Couldn't reach GitHub. Check your internet connection and try again." = "無法連線至 GitHub。請檢查網際網路連線，然後再試一次。";
+"Move GlideTab to Applications?" = "要將 GlideTab 移到「應用程式」檔案夾嗎？";
+"GlideTab works best from the Applications folder. There it can update itself, and it stays put when you clean up Downloads." = "GlideTab 在「應用程式」檔案夾中執行效果最佳。在那裡它可以自動更新，清理「下載項目」時也不會被刪掉。";
+"Move to Applications" = "移到「應用程式」";
+"GlideTab couldn't be moved. Drag it to the Applications folder in Finder, then open it from there." = "無法移動 GlideTab。請在 Finder 中將它拖到「應用程式」檔案夾，然後從那裡打開。";
+"GlideTab needs to be in the Applications folder to install updates." = "GlideTab 需要位於「應用程式」檔案夾中才能安裝更新。";
