@@ -57,9 +57,16 @@ Every open window on your Mac, with a live preview.
 
 1. **[Download GlideTab.zip](https://github.com/mohdmahmodi/glidetab/releases/latest/download/GlideTab.zip)** and unzip it.
 2. Move **GlideTab** to your Applications folder and open it.
-3. Allow **Accessibility** when asked. Allow **Screen Recording** too if you want thumbnails.
+3. Follow the short setup. It explains each permission before macOS asks: **Accessibility** is required, **Screen Recording** only for thumbnails.
 
 That's it. Hold <kbd>⌥ Option</kbd>, press <kbd>Tab</kbd>, and let go to switch.
+
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/setup-light.png">
+  <img src="docs/images/setup.png" width="520" alt="The setup window explaining why GlideTab needs Accessibility">
+</picture>
+</p>
 
 <sub>Works on macOS 14 Sonoma or later, on Apple silicon and Intel. Signed and notarized by Apple. GlideTab updates itself from this page.</sub>
 

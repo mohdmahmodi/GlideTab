@@ -177,6 +177,7 @@ enum Prefs {
         static let backgroundCapture = "backgroundCapture"
         static let commandLine = "commandLine"
         static let didSetUpLoginItem = "didSetUpLoginItem"
+        static let onboarding = "onboarding"
         static let languages = "AppleLanguages"
     }
 

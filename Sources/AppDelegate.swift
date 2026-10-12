@@ -3,6 +3,7 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWindowDelegate {
     private var statusItem: NSStatusItem?
     private var settingsWindow: NSWindow?
+    private var onboardingWindow: NSWindow?
     private var accessibilityTimer: Timer?
     private var started = false
     private var signalSources: [DispatchSourceSignal] = []
@@ -17,7 +18,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
 
         updateStatusItem()
         CLI.setEnabled(Prefs.commandLine)
-        if !UserDefaults.standard.bool(forKey: Prefs.Key.didSetUpLoginItem) {
+        // New installs register the login item when setup ends, so nothing appears before the setup window.
+        if !Onboarding.isNeeded, !UserDefaults.standard.bool(forKey: Prefs.Key.didSetUpLoginItem) {
             UserDefaults.standard.set(true, forKey: Prefs.Key.didSetUpLoginItem)
             LoginItem.isEnabled = true
         }
@@ -26,11 +28,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         restoreCommandTabOnSignals()
         Updater.shared.start()
 
+        // Explain the permissions before macOS asks for them. Also reopens after the Screen Recording relaunch.
+        if Onboarding.isNeeded { showOnboarding() }
         if Permissions.accessibility {
             start()
         } else {
-            showSettings()
-            Permissions.requestAccessibility()
             accessibilityTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
                 guard Permissions.accessibility else { return }
                 timer.invalidate()
@@ -59,7 +61,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
 
     /// Opening the app again (e.g. from Finder or Spotlight) shows Settings, which matters when the menu bar icon is hidden.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        showSettings()
+        if Onboarding.isNeeded { showOnboarding() } else { showSettings() }
         return false
     }
 
@@ -73,13 +75,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         started = true
         WindowManager.shared.start()
         BrowserTabs.shared.start()
-        if Prefs.style == .thumbnails {
-            if Permissions.screenRecording {
-                Thumbnails.shared.capture(WindowManager.shared.currentWindows())
-            } else {
-                Permissions.requestScreenRecording()
-            }
-        }
     }
 
     // MARK: Menu bar
@@ -102,7 +97,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
         if !Permissions.accessibility || (Prefs.style == .thumbnails && !Permissions.screenRecording) {
-            let warning = menu.addItem(withTitle: String(localized: "Permissions Needed…"), action: #selector(showSettings), keyEquivalent: "")
+            let warning = menu.addItem(withTitle: String(localized: "Permissions Needed…"),
+                                       action: Onboarding.isNeeded ? #selector(showOnboarding) : #selector(showSettings), keyEquivalent: "")
             warning.image = NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: nil)
             warning.target = self
             menu.addItem(.separator())
@@ -122,6 +118,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         }
         NSApp.activate()
         settingsWindow?.makeKeyAndOrderFront(nil)
+    }
+
+    @objc func showOnboarding() {
+        if onboardingWindow == nil {
+            let window = Onboarding.makeWindow { [weak self] in self?.onboardingWindow?.close() }
+            window.delegate = self
+            onboardingWindow = window
+        }
+        NSApp.activate()
+        onboardingWindow?.makeKeyAndOrderFront(nil)
     }
 
     /// Quits and reopens the app. The helper waits for this process to exit, so `open` starts a fresh copy.
@@ -146,11 +152,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         ])
     }
 
+    /// Closing setup once GlideTab can work counts as finishing it, so it doesn't reopen at every login.
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        if sender === onboardingWindow, Permissions.accessibility { Onboarding.finish() }
+        return true
+    }
+
     /// Drop the Settings window when closed so nothing in it keeps running in the background.
     func windowWillClose(_ notification: Notification) {
         if (notification.object as? NSWindow) === settingsWindow {
             Switcher.shared.cancelRecording()
             settingsWindow = nil
+        } else if (notification.object as? NSWindow) === onboardingWindow {
+            onboardingWindow = nil
         }
     }
 }

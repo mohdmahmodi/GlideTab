@@ -22,19 +22,17 @@ final class Updater {
 
     func check(userInitiated: Bool) {
         guard !isChecking else { return }
-        guard let repository, let url = URL(string: "https://api.github.com/repos/\(repository)/releases/latest") else {
+        guard let repository else {
             if userInitiated { alert(String(localized: "Updates aren't configured for this build.")) }
             return
         }
         isChecking = true
-        var request = URLRequest(url: url, timeoutInterval: 20)
-        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
-        URLSession.shared.dataTask(with: request) { data, response, _ in
-            DispatchQueue.main.async {
+        Task {
+            let latest = await Self.latestRelease(of: repository)
+            await MainActor.run {
                 self.isChecking = false
-                guard (response as? HTTPURLResponse)?.statusCode == 200, let data,
-                      let release = try? JSONDecoder().decode(Release.self, from: data) else {
-                    if userInitiated { self.alert(String(localized: "Couldn't check for updates.")) }
+                guard let release = latest else {
+                    if userInitiated { self.alert(String(localized: "Couldn't reach GitHub. Check your internet connection and try again.")) }
                     return
                 }
                 let version = release.tag.trimmingCharacters(in: CharacterSet(charactersIn: "vV"))
@@ -46,7 +44,31 @@ final class Updater {
                 }
                 self.offer(version: version, notes: release.body ?? "", download: asset.url)
             }
-        }.resume()
+        }
+    }
+
+    /// Asks the GitHub API first. Its unauthenticated limit is 60 requests an hour per network, so when that
+    /// fails, the release page's redirect gives the latest tag, and the download URL follows from it.
+    private static func latestRelease(of repository: String) async -> Release? {
+        if let url = URL(string: "https://api.github.com/repos/\(repository)/releases/latest") {
+            var request = URLRequest(url: url, timeoutInterval: 20)
+            request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
+            if let (data, response) = try? await URLSession.shared.data(for: request),
+               (response as? HTTPURLResponse)?.statusCode == 200,
+               let release = try? JSONDecoder().decode(Release.self, from: data) {
+                return release
+            }
+        }
+        guard let page = URL(string: "https://github.com/\(repository)/releases/latest") else { return nil }
+        var request = URLRequest(url: page, timeoutInterval: 20)
+        request.httpMethod = "HEAD"
+        guard let (_, response) = try? await URLSession.shared.data(for: request),
+              (response as? HTTPURLResponse)?.statusCode == 200,
+              let final = response.url, isTrustedHost(final),
+              final.pathComponents.dropLast().last == "tag",
+              let download = URL(string: "https://github.com/\(repository)/releases/download/\(final.lastPathComponent)/GlideTab.zip")
+        else { return nil }
+        return Release(tag: final.lastPathComponent, body: nil, assets: [.init(name: download.lastPathComponent, url: download)])
     }
 
     private struct Release: Decodable {

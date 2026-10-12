@@ -10,6 +10,7 @@ import SwiftUI
 ///     open -W --stdout out.txt GlideTab.app --args --dump
 ///     open -W GlideTab.app --args --snapshot panel.png [-style list] [--query text] [--dark | --light] [--hover]
 ///     open -W GlideTab.app --args --snapshot settings.png --settings [--tab 0…5]
+///     open -W GlideTab.app --args --snapshot welcome.png --onboarding [-onboarding accessibility|previews|ready]
 ///         Either form also takes [--backdrop image] [--only bundle.id,bundle.id] for clean screenshots.
 ///     open -W --stdout out.txt GlideTab.app --args --stress        (never focuses anything)
 ///     open -W --stdout out.txt GlideTab.app --args --e2e           (really switches windows, then restores)
@@ -81,6 +82,22 @@ enum Debug {
                 let screen = NSScreen.main!
                 let frame = NSWindow(contentRect: screen.frame.insetBy(dx: 30, dy: 30), styleMask: .borderless, backing: .buffered, defer: true)
                 capture(frame, to: path, screen: screen)
+            }
+            return
+        }
+        if args.contains("--onboarding") {
+            let onboarding = Onboarding.makeWindow {}
+            onboarding.level = .floating
+            NSApp.activate()
+            onboarding.makeKeyAndOrderFront(nil)
+            window = onboarding
+            // Drawn from the view itself, so it doesn't need Screen Recording.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                guard let view = onboarding.contentView?.superview,
+                      let bitmap = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { exit(1) }
+                view.cacheDisplay(in: view.bounds, to: bitmap)
+                try? bitmap.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))
+                exit(0)
             }
             return
         }
