@@ -36,16 +36,22 @@ enum GestureOutput: Equatable {
 /// `trigger` opens the switcher and each further `step` moves the selection; lifting a finger ends it.
 /// Vertical swipes are ignored, so Mission Control still works.
 struct GestureRecognizer {
-    var fingers = 3
+    var fingers: Int
     /// Distances in normalized trackpad units (0…1).
-    var trigger = 0.06
-    var step = 0.05
+    var trigger: Double
+    var step: Double
 
     private var anchor: CGPoint?
     private var started = false
     private var ignored = false
 
     var isActive: Bool { started }
+
+    init(fingers: Int = 3, trigger: Double = 0.06, step: Double = 0.05) {
+        self.fingers = fingers
+        self.trigger = trigger
+        self.step = step
+    }
 
     /// `touches` are the positions of the fingers currently down. Events with no touch information at all
     /// must not be passed in (macOS sends those between real ones).

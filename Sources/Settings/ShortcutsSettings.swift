@@ -298,6 +298,11 @@ private struct SwitcherKeysGuide: View {
     let keepOpen: Bool
     private let scale: CGFloat = 0.66
 
+    init(holdKeys: [MacKey], keepOpen: Bool) {
+        self.holdKeys = holdKeys
+        self.keepOpen = keepOpen
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: 24) {
             VStack(alignment: .leading, spacing: 10) {
