@@ -14,10 +14,15 @@ enum Onboarding {
         set { UserDefaults.standard.set(newValue.rawValue, forKey: Prefs.Key.onboarding) }
     }
 
-    /// Copies that already work (Accessibility granted before this window existed) skip it.
+    /// Copies that already work (Accessibility granted before this window existed) skip it. Without
+    /// Accessibility, GlideTab can't do anything, so setup comes back at that step even if it was finished before,
+    /// say after a reinstall with the permission removed.
     static var isNeeded: Bool {
         if UserDefaults.standard.string(forKey: Prefs.Key.onboarding) == nil, Permissions.accessibility {
             step = .done
+        }
+        if step == .done, !Permissions.accessibility {
+            step = .accessibility
         }
         return step != .done
     }
