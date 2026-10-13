@@ -21,10 +21,7 @@ Hold <kbd>⌥ Option</kbd> and press <kbd>Tab</kbd> to see every open window, wi
 
 <br>
 
-<picture>
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/switcher-light.jpg">
-  <img src="docs/images/switcher.jpg" width="880" alt="The GlideTab switcher showing six windows with live previews">
-</picture>
+<img src="docs/images/demo.gif" width="800" alt="Holding Option and pressing Tab opens the switcher, typing narrows it to two windows, and Return switches">
 
 </div>
 
