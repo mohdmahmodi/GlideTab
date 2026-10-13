@@ -450,7 +450,8 @@
       press("tab", true);
       if (!hero.open) openSwitcher();
       else move(event.shiftKey ? -1 : 1);
-      coach("open");
+      // While a search is pinned open, letting go of Option does nothing, so keep saying Return.
+      coach(hero.pinned ? "typing" : "open");
       return;
     }
     if (!hero.open) return;
