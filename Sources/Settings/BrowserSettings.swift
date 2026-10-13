@@ -79,11 +79,13 @@ struct BrowserSettings: View {
     }
 
     private func update() {
-        var next: [String: Permissions.AutomationState] = [:]
-        for bundleID in installed where BrowserTabs.supported[bundleID] != .accessibility {
-            next[bundleID] = Permissions.automation(bundleID)
+        // Each check can wait on the browser, so they run off the main thread and the pills update when done.
+        let ids = installed.filter { BrowserTabs.supported[$0] != .accessibility }
+        DispatchQueue.global(qos: .userInitiated).async {
+            var next: [String: Permissions.AutomationState] = [:]
+            for bundleID in ids { next[bundleID] = Permissions.automation(bundleID) }
+            DispatchQueue.main.async { states = next }
         }
-        states = next
     }
 }
 

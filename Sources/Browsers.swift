@@ -83,11 +83,11 @@ final class BrowserTabs {
         // Tabs mostly change while you're in the browser, so refresh as you leave it.
         center.addObserver(forName: NSWorkspace.didDeactivateApplicationNotification, object: nil, queue: .main) { [weak self] note in
             guard Prefs.browserTabs != .off,
-                  let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
-                  Self.mayReadInBackground(app) else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                guard !app.isActive, !app.isTerminated else { return }
-                self?.refresh([app], force: true)
+                  let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else { return }
+            // The permission check talks to the browser and can take a while, so it never runs on the main thread.
+            self?.queue.asyncAfter(deadline: .now() + 1.5) {
+                guard !app.isActive, !app.isTerminated, Self.mayReadInBackground(app) else { return }
+                DispatchQueue.main.async { self?.refresh([app], force: true) }
             }
         }
         center.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: .main) { [weak self] note in
@@ -95,7 +95,13 @@ final class BrowserTabs {
             self?.windowsByPid[app.processIdentifier] = nil
             self?.lastRefresh[app.processIdentifier] = nil
         }
-        if Prefs.browserTabs != .off { refresh(NSWorkspace.shared.runningApplications.filter(Self.mayReadInBackground)) }
+        if Prefs.browserTabs != .off {
+            let running = NSWorkspace.shared.runningApplications
+            queue.async { [weak self] in
+                let allowed = running.filter(Self.mayReadInBackground)
+                DispatchQueue.main.async { self?.refresh(allowed) }
+            }
+        }
     }
 
     /// Background reads never trigger a permission prompt: only browsers you've already allowed are read

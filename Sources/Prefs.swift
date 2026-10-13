@@ -357,16 +357,49 @@ enum Permissions {
     enum AutomationState { case allowed, denied, notAsked, notRunning }
 
     /// Automation permission for controlling `bundleID` (browser tabs).
+    ///
+    /// The system call behind this asks the target app over Apple Events, and on some macOS versions it never
+    /// returns when that app doesn't answer. So it runs on its own thread with a time limit, and a browser
+    /// that didn't answer isn't asked again for a minute. Callers may still prefer a background thread.
     static func automation(_ bundleID: String) -> AutomationState {
-        let target = NSAppleEventDescriptor(bundleIdentifier: bundleID)
-        guard let desc = target.aeDesc else { return .notRunning }
-        switch AEDeterminePermissionToAutomateTarget(desc, typeWildCard, typeWildCard, false) {
-        case noErr: return .allowed
-        case OSStatus(procNotFound): return .notRunning
-        case OSStatus(errAEEventWouldRequireUserConsent): return .notAsked
-        default: return .denied
+        automationLock.lock()
+        let recentlyHung = unresponsiveUntil[bundleID].map { $0 > Date() } ?? false
+        let alreadyAsking = automationInFlight.contains(bundleID)
+        if !recentlyHung && !alreadyAsking { automationInFlight.insert(bundleID) }
+        automationLock.unlock()
+        if recentlyHung || alreadyAsking { return .notRunning }
+
+        final class Box: @unchecked Sendable { var state = AutomationState.notRunning }
+        let box = Box()
+        let done = DispatchSemaphore(value: 0)
+        automationQueue.async {
+            let target = NSAppleEventDescriptor(bundleIdentifier: bundleID)
+            if let desc = target.aeDesc {
+                switch AEDeterminePermissionToAutomateTarget(desc, typeWildCard, typeWildCard, false) {
+                case noErr: box.state = .allowed
+                case OSStatus(procNotFound): box.state = .notRunning
+                case OSStatus(errAEEventWouldRequireUserConsent): box.state = .notAsked
+                default: box.state = .denied
+                }
+            }
+            automationLock.lock()
+            automationInFlight.remove(bundleID)
+            automationLock.unlock()
+            done.signal()
         }
+        if done.wait(timeout: .now() + 1.5) == .timedOut {
+            automationLock.lock()
+            unresponsiveUntil[bundleID] = Date(timeIntervalSinceNow: 60)
+            automationLock.unlock()
+            return .notRunning
+        }
+        return box.state
     }
+
+    private static let automationQueue = DispatchQueue(label: "GlideTab.automation", attributes: .concurrent)
+    private static let automationLock = NSLock()
+    private static var automationInFlight: Set<String> = []
+    private static var unresponsiveUntil: [String: Date] = [:]
 
     static func openSettings(_ pane: String) {
         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)")!)
