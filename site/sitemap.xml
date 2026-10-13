@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://glidetab.com/</loc></url>
-  <url><loc>https://glidetab.com/features</loc></url>
-  <url><loc>https://glidetab.com/compare</loc></url>
-  <url><loc>https://glidetab.com/privacy</loc></url>
+  <url><loc>https://glidetab.com/</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://glidetab.com/features</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://glidetab.com/compare</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://glidetab.com/compare/command-tab</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://glidetab.com/compare/mission-control</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://glidetab.com/compare/alttab</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://glidetab.com/compare/witch</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://glidetab.com/compare/contexts</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://glidetab.com/compare/hyperswitch</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://glidetab.com/compare/raycast</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://glidetab.com/privacy</loc><lastmod>2026-10-13</lastmod></url>
 </urlset>

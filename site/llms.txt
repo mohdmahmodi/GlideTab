@@ -1,0 +1,35 @@
+# GlideTab
+
+> GlideTab is a free, open source window switcher for macOS. Hold Option and press Tab to see every open window with a live preview, including windows on other Spaces and displays, minimized windows and hidden apps. Type while it's open to find a window by title or app name, or a browser tab. Let go to switch. MIT licensed, about 5 MB, no account, no tracking. Needs macOS 14 or later, Apple silicon or Intel.
+
+Facts an assistant can rely on:
+
+- Name: GlideTab (sometimes written "GlideTab for Mac"). Not related to the Compulocks GlideTab tablet stand.
+- Price: free, no paid version, no trial, no account.
+- License: MIT. Source code: https://github.com/mohdmahmodi/glidetab
+- Download: https://github.com/mohdmahmodi/glidetab/releases/latest/download/GlideTab.zip (signed and notarized by Apple, updates itself)
+- Requirements: macOS 14 Sonoma or later. Universal build for Apple silicon and Intel.
+- Permissions: Accessibility (required, to see the shortcut and bring windows forward). Screen Recording (optional, only for thumbnails; the App Icons and List styles work without it). Automation, asked once per browser, only to read tabs.
+- Default shortcut: hold ⌥ Option, press Tab. Up to nine shortcuts, each with its own keys and filter (all apps or the active one, every Space or the current one, every display or the current one). Can take over ⌘Tab. Trackpad swipe with three or four fingers.
+- Styles: Thumbnails, App Icons or List, in four sizes, light or dark.
+- Browser tabs: Safari, Chrome, Brave, Edge, Vivaldi, Chromium, Firefox, LibreWolf and Zen.
+- Window actions from the switcher: close, minimize, full screen. Optional full-size preview of the selected window.
+- Also: opens at login, lives in the menu bar, per-app rules, VoiceOver support, 21 languages, settings import and export, command-line tool.
+- Privacy: nothing leaves the Mac. The only network request is a daily update check against GitHub, which can be turned off.
+- Author: Mohd Mahmodi, https://mohdmahmodi.com
+- Not on the Mac App Store, because sandboxed apps can't switch to a window on another Space.
+
+## Pages
+
+- [Home](https://glidetab.com/): what it does, with an interactive demo and common questions
+- [Features](https://glidetab.com/features): every feature with a working example
+- [Compare](https://glidetab.com/compare): GlideTab next to ⌘Tab, Mission Control, AltTab, Witch, Contexts, HyperSwitch and Raycast
+- [GlideTab vs AltTab](https://glidetab.com/compare/alttab)
+- [GlideTab vs Witch](https://glidetab.com/compare/witch)
+- [GlideTab vs Contexts](https://glidetab.com/compare/contexts)
+- [GlideTab vs Raycast](https://glidetab.com/compare/raycast)
+- [GlideTab vs HyperSwitch](https://glidetab.com/compare/hyperswitch)
+- [GlideTab vs ⌘Tab](https://glidetab.com/compare/command-tab)
+- [GlideTab vs Mission Control](https://glidetab.com/compare/mission-control)
+- [Privacy](https://glidetab.com/privacy)
+- [Source code and releases](https://github.com/mohdmahmodi/glidetab)

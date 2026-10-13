@@ -2326,3 +2326,36 @@ footer a:hover {
     transition: none !important;
   }
 }
+
+/* Compare pages: the written comparison under the chart. */
+.compare-copy {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+.compare-copy h2 {
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  margin: 32px 0 10px;
+}
+
+.compare-copy p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--label-2);
+  margin: 0 0 14px;
+}
+
+.compare-copy a,
+.more-link a {
+  color: var(--label);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--label-3);
+}
+
+.more-link {
+  margin: 18px 0 0;
+  font-size: 14px;
+  text-align: center;
+}

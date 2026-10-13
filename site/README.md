@@ -6,7 +6,10 @@ A static site: plain HTML, CSS and JavaScript with no build step. Animations use
 | --- | --- |
 | `index.html` | The landing page, with the interactive switcher demo |
 | `features.html` | Each feature with a working example, plus a grid of the rest |
-| `compare.html`, `compare.js` | Side-by-side comparisons, one app at a time or all in one chart |
+| `compare-data.js` | The comparison data and the written comparisons. Edit this, not the pages below |
+| `compare.html`, `compare/*.html`, `compare.js` | The Compare hub and one page per app, written by `tools/build.mjs` |
+| `tools/build.mjs` | Writes the Compare pages, the sitemap, the version number and the structured data |
+| `llms.txt`, `robots.txt`, `sitemap.xml` | For search engines and AI crawlers |
 | `windows.html` | The demo windows (browser, code editor, Messages and so on), shared by every page |
 | `privacy.html`, `404.html` | Privacy notes and the not-found page |
 | `styles.css`, `demo.css` | Page styles, and the demo desktop's windows |
@@ -44,7 +47,8 @@ Then open http://localhost:8787.
 - The version number in the page updates itself from the GitHub API once the repository is public. Until then it shows the number written in `index.html`.
 - After changing a CSS or JavaScript file, bump the `?v=` number where it's linked, so browsers fetch the new file.
 - The demo windows are HTML templates in `windows.html`. The desktop and every switcher thumbnail are drawn from them, so a change to a window shows up everywhere.
-- Comparison data lives at the top of `compare.js`. Update it there and both the side-by-side view and the full chart follow.
+- Comparison data and text live in `compare-data.js`. After editing it, or after bumping the version in `Resources/Info.plist`, run `node site/tools/build.mjs` from the repository root and commit what it writes: `compare.html`, `compare/*.html`, `sitemap.xml`, and the version numbers and structured data in `index.html` and `features.html`.
+- Each page's `<head>` carries a title and description written for search, Open Graph and Twitter tags, and JSON-LD structured data (SoftwareApplication, FAQPage and breadcrumbs). Keep titles under about 60 characters and descriptions under about 160.
 
 ## Images
 
