@@ -10,7 +10,7 @@ A static site: plain HTML, CSS and JavaScript with no build step. Animations use
 | `compare.html`, `compare/*.html`, `compare.js` | The Compare hub and one page per app, written by `tools/build.mjs` |
 | `tools/build.mjs` | Writes the Compare pages, the sitemap, the version number and the structured data |
 | `llms.txt`, `robots.txt`, `sitemap.xml` | For search engines and AI crawlers |
-| `windows.html` | The demo windows (browser, code editor, Messages and so on), shared by every page |
+| `windows.html` | The demo windows (Safari, Xcode, Messages, Finder, Photos, Calendar, Mail, Music), shared by every page |
 | `privacy.html`, `404.html` | Privacy notes and the not-found page |
 | `styles.css`, `demo.css` | Page styles, and the demo desktop's windows |
 | `site.js`, `app.js` | Shared page behavior, and the switcher demos |
@@ -50,7 +50,11 @@ Then open http://localhost:8787.
 - Comparison data and text live in `compare-data.js`. After editing it, or after bumping the version in `Resources/Info.plist`, run `node site/tools/build.mjs` from the repository root and commit what it writes: `compare.html`, `compare/*.html`, `sitemap.xml`, and the version numbers and structured data in `index.html` and `features.html`.
 - Each page's `<head>` carries a title and description written for search, Open Graph and Twitter tags, and JSON-LD structured data (SoftwareApplication, FAQPage and breadcrumbs). Keep titles under about 60 characters and descriptions under about 160.
 
-## Images
+## The demo desktop
 
-- `images/wallpaper.jpg`, the demo desktop's wallpaper, is a photo from [Unsplash](https://unsplash.com/photos/1506905925346-21bda4d32df4), used under the [Unsplash License](https://unsplash.com/license) (free to use, no attribution required).
-- Everything else, including the app icons in the demo, is drawn for this site.
+The landing page's desktop behaves like a Mac: windows drag by their title bars, the three buttons close, minimize and zoom them, and the Dock brings them back. Minimized windows still appear in the switcher, marked as minimized, which is what GlideTab itself does.
+
+- `images/wallpaper-sonoma.jpg` and `wallpaper-sonoma-dark.jpg` are the macOS Sonoma wallpaper, exported from a Mac at 1800 by 1200.
+- `images/apps/*.png` are the real app, folder and document icons, exported from a Mac at 192 pixels with `NSWorkspace.icon(forFile:)`. Apple owns them; they appear here only to depict macOS, the way a screenshot would.
+- `images/photos/*.jpg`, the tiles in the Photos window, are crops of a photo from [Unsplash](https://unsplash.com/photos/1506905925346-21bda4d32df4), used under the [Unsplash License](https://unsplash.com/license).
+- Window contents are HTML and CSS in `windows.html` and `demo.css`, laid out at macOS sizes (52 point toolbars, 12 point traffic lights, 13 point text).

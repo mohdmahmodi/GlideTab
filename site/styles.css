@@ -26,13 +26,21 @@
   --key-edge: rgba(0, 0, 0, 0.2);
   --key-text: #1d1d1f;
   --panel: #f2f2f4;
-  --dock: #e7e8eb;
+  --dock: rgba(255, 255, 255, 0.32);
   --segment-on: #ffffff;
   --bubble: #e9e9eb;
   --mark: #ffe066;
   --shadow-window: 0 0 0 0.5px rgba(0, 0, 0, 0.16), 0 1px 2px rgba(0, 0, 0, 0.06), 0 16px 36px rgba(0, 0, 0, 0.14);
   --shadow-key-window: 0 0 0 0.5px rgba(0, 0, 0, 0.22), 0 2px 4px rgba(0, 0, 0, 0.08), 0 26px 60px rgba(0, 0, 0, 0.26);
   --shadow-panel: 0 0 0 0.5px rgba(0, 0, 0, 0.2), 0 3px 8px rgba(0, 0, 0, 0.08), 0 30px 70px rgba(0, 0, 0, 0.3);
+  --light-off: #dcdcde;
+  --menubar: rgba(255, 255, 255, 0.28);
+  --menubar-text: #1d1d1f;
+  --menubar-shadow: none;
+  --dock-edge: rgba(0, 0, 0, 0.18);
+  --dock-inner: rgba(255, 255, 255, 0.5);
+  --dock-dot: rgba(0, 0, 0, 0.55);
+  --glass: rgba(238, 238, 240, 0.8);
   --red: #ff5f57;
   --yellow: #febc2e;
   --green: #28c840;
@@ -76,13 +84,21 @@
     --key-edge: rgba(0, 0, 0, 0.65);
     --key-text: #f5f5f7;
     --panel: #29292c;
-    --dock: #333336;
+    --dock: rgba(60, 60, 66, 0.5);
     --segment-on: #636366;
     --bubble: #3a3a3c;
     --mark: #8a6d00;
     --shadow-window: 0 0 0 0.5px rgba(0, 0, 0, 0.9), inset 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 16px 36px rgba(0, 0, 0, 0.42);
     --shadow-key-window: 0 0 0 0.5px rgba(0, 0, 0, 0.95), inset 0 0 0 0.5px rgba(255, 255, 255, 0.14), 0 26px 60px rgba(0, 0, 0, 0.6);
     --shadow-panel: 0 0 0 0.5px rgba(0, 0, 0, 0.95), inset 0 0 0 0.5px rgba(255, 255, 255, 0.12), 0 30px 80px rgba(0, 0, 0, 0.62);
+    --light-off: #4c4c50;
+    --menubar: rgba(20, 20, 24, 0.3);
+    --menubar-text: #f5f5f7;
+    --menubar-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    --dock-edge: rgba(0, 0, 0, 0.55);
+    --dock-inner: rgba(255, 255, 255, 0.18);
+    --dock-dot: rgba(255, 255, 255, 0.75);
+    --glass: rgba(36, 36, 40, 0.72);
     --ev-blue: #1c3a5c;
     --ev-blue-text: #a9d1ff;
     --ev-green: #1d4229;
@@ -119,13 +135,21 @@
   --key-edge: rgba(0, 0, 0, 0.65);
   --key-text: #f5f5f7;
   --panel: #29292c;
-  --dock: #333336;
+  --dock: rgba(60, 60, 66, 0.5);
   --segment-on: #636366;
   --bubble: #3a3a3c;
   --mark: #8a6d00;
   --shadow-window: 0 0 0 0.5px rgba(0, 0, 0, 0.9), inset 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 16px 36px rgba(0, 0, 0, 0.42);
   --shadow-key-window: 0 0 0 0.5px rgba(0, 0, 0, 0.95), inset 0 0 0 0.5px rgba(255, 255, 255, 0.14), 0 26px 60px rgba(0, 0, 0, 0.6);
   --shadow-panel: 0 0 0 0.5px rgba(0, 0, 0, 0.95), inset 0 0 0 0.5px rgba(255, 255, 255, 0.12), 0 30px 80px rgba(0, 0, 0, 0.62);
+  --light-off: #4c4c50;
+  --menubar: rgba(20, 20, 24, 0.3);
+  --menubar-text: #f5f5f7;
+  --menubar-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  --dock-edge: rgba(0, 0, 0, 0.55);
+  --dock-inner: rgba(255, 255, 255, 0.18);
+  --dock-dot: rgba(255, 255, 255, 0.75);
+  --glass: rgba(36, 36, 40, 0.72);
   --ev-blue: #1c3a5c;
   --ev-blue-text: #a9d1ff;
   --ev-green: #1d4229;
@@ -526,7 +550,7 @@ button.key {
 .window {
   position: relative;
   background: var(--window);
-  border-radius: 12px;
+  border-radius: 10px;
   box-shadow: var(--shadow-window);
   overflow: hidden;
 }
@@ -547,11 +571,12 @@ button.key {
 
 .lights {
   position: absolute;
-  left: 14px;
+  left: 13px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   gap: 8px;
+  z-index: 2;
 }
 
 .lights i {
@@ -559,20 +584,40 @@ button.key {
   height: 12px;
   border-radius: 50%;
   background: var(--red);
-  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.18);
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 8px 8px;
 }
 
 .lights i:nth-child(2) {
-  background: var(--yellow);
+  background-color: var(--yellow);
 }
 
 .lights i:nth-child(3) {
-  background: var(--green);
+  background-color: var(--green);
+}
+
+/* Hovering the buttons shows their glyphs, like on a Mac. */
+.desk-window .lights:hover i:nth-child(1) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M1.5 1.5l5 5M6.5 1.5l-5 5' stroke='%234d0000' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.desk-window .lights:hover i:nth-child(2) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M1.3 4h5.4' stroke='%23995700' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.desk-window .lights:hover i:nth-child(3) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M1.4 4.6v2h2zM6.6 3.4v-2h-2z' fill='%23006400'/%3E%3C/svg%3E");
 }
 
 .inactive .lights i {
-  background: var(--fill-2);
+  background-color: var(--light-off);
   box-shadow: inset 0 0 0 0.5px var(--line-strong);
+}
+
+.desk-window .lights i {
+  cursor: default;
 }
 
 .inactive .titlebar,
@@ -713,19 +758,43 @@ button.key {
   transform-origin: 0 0;
 }
 
+.stage .wall {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stage .wall.dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .stage .wall.light { display: none; }
+  :root:not([data-theme="light"]) .stage .wall.dark { display: block; }
+}
+
+:root[data-theme="dark"] .stage .wall.light { display: none; }
+:root[data-theme="dark"] .stage .wall.dark { display: block; }
+
+/* The menu bar: a light blur of the wallpaper, white or black text to match the theme. */
 .mini-menubar {
   position: absolute;
   inset: 0 0 auto;
-  height: 26px;
+  height: 24px;
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 0 16px;
-  background: var(--window);
-  border-bottom: 0.5px solid var(--line);
+  gap: 17px;
+  padding: 0 14px 0 18px;
+  background: var(--menubar);
+  backdrop-filter: blur(28px) saturate(1.6);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
+  color: var(--menubar-text);
   font-size: 13px;
   letter-spacing: 0;
   z-index: 40;
+  text-shadow: var(--menubar-shadow);
 }
 
 .mini-menubar b {
@@ -733,66 +802,87 @@ button.key {
 }
 
 .mini-menubar .logo {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 16px;
+  margin-right: -2px;
 }
 
 .mini-menubar .right {
   margin-left: auto;
   display: flex;
-  gap: 14px;
+  gap: 13px;
   align-items: center;
   font-variant-numeric: tabular-nums;
 }
 
 .mini-menubar svg {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
 }
 
+.mini-menubar .batt {
+  width: 24px;
+}
+
+/* The Dock, with the real icons and a dot under each running app. */
 .dock {
   position: absolute;
   left: 50%;
-  bottom: 8px;
+  bottom: 6px;
   translate: -50% 0;
   display: flex;
   align-items: flex-end;
-  gap: 6px;
-  padding: 6px 8px 8px;
+  gap: 5px;
+  padding: 5px 6px;
   border-radius: 20px;
   background: var(--dock);
-  box-shadow: 0 0 0 0.5px var(--line-strong), 0 8px 24px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(30px) saturate(1.8);
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  box-shadow: 0 0 0 0.5px var(--dock-edge), inset 0 0 0 0.5px var(--dock-inner), 0 10px 28px rgba(0, 0, 0, 0.3);
   z-index: 35;
 }
 
 .dock .slot {
   position: relative;
-  width: 46px;
-  height: 46px;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: default;
+  transform-origin: 50% 100%;
+  transition: transform 0.14s ease-out;
 }
 
+.dock .slot:hover {
+  transform: translateY(-2px) scale(1.12);
+}
+
+.dock .slot img,
 .dock .slot svg {
-  width: 46px;
-  height: 46px;
+  width: 52px;
+  height: 52px;
+  display: block;
 }
 
 .dock .slot.running::after {
   content: "";
   position: absolute;
   left: 50%;
-  bottom: -6px;
+  bottom: -5px;
   width: 4px;
   height: 4px;
   margin-left: -2px;
   border-radius: 50%;
-  background: var(--label-2);
+  background: var(--dock-dot);
 }
 
 .dock .divider {
-  width: 0.5px;
-  height: 40px;
-  margin: 0 4px 3px;
-  background: var(--line-strong);
+  width: 1px;
+  height: 44px;
+  margin: 0 4px 4px;
+  background: var(--dock-edge);
 }
 
 .desk-window {

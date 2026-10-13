@@ -16,7 +16,7 @@ const require = createRequire(import.meta.url);
 const { APPS, duelCard, matrix } = require(join(site, "compare-data.js"));
 
 const ORIGIN = "https://glidetab.com";
-const ASSET_V = 21;
+const ASSET_V = 22;
 const TODAY = new Date().toISOString().slice(0, 10);
 const VERSION = readFileSync(join(repo, "Resources/Info.plist"), "utf8")
   .match(/CFBundleShortVersionString<\/key>\s*<string>([^<]+)</)[1];

@@ -15,15 +15,19 @@
   // MARK: Demo data
 
   const WINDOWS = {
-    browser: { app: "Browser", title: "Four days in Lisbon", icon: "app-browser", w: 760, h: 500, x: 320, y: 76 },
-    messages: { app: "Messages", title: "Ana Ribeiro", icon: "app-messages", w: 540, h: 340, x: 640, y: 330 },
-    design: { app: "Design", title: "Lisbon App", icon: "app-design", w: 660, h: 420, x: 160, y: 230, cls: "design" },
-    code: { app: "Code", title: "Switcher.swift", icon: "app-code", w: 700, h: 460, x: 36, y: 44, cls: "code" },
-    photos: { app: "Photos", title: "Library", icon: "app-photos", w: 500, h: 300, x: 40, y: 380 },
-    calendar: { app: "Calendar", title: "October 2026", icon: "app-calendar", w: 450, h: 320, x: 720, y: 40 },
-    mail: { app: "Mail", title: "Inbox", icon: "app-mail", w: 640, h: 380, x: 300, y: 110, badge: "space" },
-    music: { app: "Music", title: "Recently Added", icon: "app-music", w: 560, h: 350, x: 360, y: 150, badge: "minimized" },
+    browser: { app: "Safari", title: "Four days in Lisbon", icon: "safari", w: 760, h: 500, x: 320, y: 76 },
+    messages: { app: "Messages", title: "Ana Ribeiro", icon: "messages", w: 540, h: 340, x: 640, y: 330 },
+    finder: { app: "Finder", title: "Lisbon 2026", icon: "finder", w: 660, h: 420, x: 160, y: 230 },
+    code: { app: "Xcode", title: "Switcher.swift", icon: "xcode", w: 700, h: 460, x: 36, y: 44, cls: "code" },
+    photos: { app: "Photos", title: "Library", icon: "photos", w: 500, h: 300, x: 40, y: 380 },
+    calendar: { app: "Calendar", title: "October 2026", icon: "calendar", w: 450, h: 320, x: 720, y: 40 },
+    mail: { app: "Mail", title: "Inbox", icon: "mail", w: 640, h: 380, x: 300, y: 110, badge: "space" },
+    music: { app: "Music", title: "Recently Added", icon: "music", w: 560, h: 350, x: 360, y: 150, badge: "minimized" },
   };
+
+  // Apps in the Dock, in order. Those with a window above light up with a dot.
+  const DOCK = ["finder", "safari", "messages", "mail", "calendar", "photos", "music", "notes", "xcode", "settings"];
+  const windowOfApp = (icon) => Object.keys(WINDOWS).find((id) => WINDOWS[id].icon === icon);
 
   const BADGES = {
     minimized: ["i-minimized", "Minimized"],
@@ -31,7 +35,10 @@
     hidden: ["i-hidden", "Hidden"],
   };
 
-  const icon = (id, cls = "app-icon") => `<svg class="${cls}" aria-hidden="true"><use href="/icons.svg#${id}"/></svg>`;
+  // App icons are the real ones, as images; everything else comes from the sprite.
+  const icon = (id, cls = "app-icon") => id.startsWith("i-")
+    ? `<svg class="${cls}" aria-hidden="true"><use href="/icons.svg#${id}"/></svg>`
+    : `<img class="${cls}" src="/images/apps/${id}.png" alt="" draggable="false">`;
 
   function buildWindow(id, extraClass = "") {
     const def = WINDOWS[id];
@@ -287,7 +294,7 @@
   if ($("#hero-panel")) {
 
   const hero = {
-    order: ["browser", "messages", "design", "code", "photos", "calendar", "mail", "music"],
+    order: ["browser", "messages", "finder", "code", "photos", "calendar", "mail", "music"],
     elements: new Map(),
     open: false,
     pinned: false,
@@ -334,36 +341,146 @@
     if (state === "done") coach.timer = setTimeout(() => coach("idle"), 4500);
   }
 
-  // The Dock, with a dot under every app that has windows.
-  $("#dock").innerHTML = ["browser", "messages", "mail", "code", "design", "photos", "calendar", "music"]
-    .map((id) => `<span class="slot running">${icon(WINDOWS[id].icon)}</span>`)
-    .join("") + '<span class="divider"></span><span class="slot">' + icon("app-files") + "</span>";
+  // The Dock, with a dot under every app that has a window. Clicking an app brings its window back.
+  const dock = $("#dock");
+  dock.innerHTML = DOCK.map((app) => `<button class="slot" data-dock="${app}" aria-label="${app}">${icon(app)}</button>`).join("")
+    + '<span class="divider"></span><button class="slot" aria-label="Trash">' + icon("trash") + "</button>";
+  dock.addEventListener("click", (event) => {
+    const app = event.target.closest("[data-dock]")?.dataset.dock;
+    const id = app && windowOfApp(app);
+    if (!id || hero.open) return;
+    takeOver();
+    if (WINDOWS[id].closed) reopenWindow(id);
+    else focusWindow(id);
+  });
+  function updateDock() {
+    $$("[data-dock]", dock).forEach((slot) => {
+      const id = windowOfApp(slot.dataset.dock);
+      slot.classList.toggle("running", Boolean(id && !WINDOWS[id].closed));
+    });
+  }
+
+  // Window chrome: drag by the title bar, and the three buttons do what they do on a Mac.
+  const stageScale = () => $("#hero-stage").getBoundingClientRect().width / 1200;
+  function wireWindow(id, el) {
+    // Every strip along the top edge drags the window, as on a Mac.
+    el.querySelectorAll(".toolbar, .titlebar, .side-top, .chat-top").forEach((chrome) => wireChrome(id, el, chrome));
+  }
+
+  function wireChrome(id, el, chrome) {
+    chrome.addEventListener("pointerdown", (event) => {
+      if (hero.open || event.button !== 0) return;
+      const light = event.target.closest(".lights i");
+      if (light) {
+        event.stopPropagation();
+        const which = [...light.parentNode.children].indexOf(light);
+        takeOver();
+        if (which === 0) closeWindow(id);
+        else if (which === 1) minimizeWindow(id);
+        else zoomWindow(id);
+        return;
+      }
+      if (event.target.closest("svg, .seg, .sfield, .address, .scheme, .tab, button")) return;
+      const scale = stageScale();
+      const start = { x: event.clientX, y: event.clientY, left: el.offsetLeft, top: el.offsetTop };
+      try { chrome.setPointerCapture(event.pointerId); } catch { /* synthetic events have no pointer to capture */ }
+      const move = (e) => {
+        const left = Math.max(-el.offsetWidth + 80, Math.min(1200 - 80, start.left + (e.clientX - start.x) / scale));
+        const top = Math.max(24, Math.min(750 - 40, start.top + (e.clientY - start.y) / scale));
+        el.style.left = `${left}px`;
+        el.style.top = `${top}px`;
+      };
+      const up = () => { chrome.removeEventListener("pointermove", move); chrome.removeEventListener("pointerup", up); };
+      chrome.addEventListener("pointermove", move);
+      chrome.addEventListener("pointerup", up);
+    });
+    chrome.addEventListener("dblclick", (event) => {
+      if (!event.target.closest(".lights, svg, .seg, .sfield, .address, .scheme, .tab")) zoomWindow(id);
+    });
+  }
+
+  function closeWindow(id) {
+    const el = hero.elements.get(id);
+    const done = () => {
+      el?.remove();
+      hero.elements.delete(id);
+      WINDOWS[id].closed = true;
+      hero.order = hero.order.filter((other) => other !== id);
+      placeWindows();
+      updateDock();
+    };
+    if (el && animate) gsap.to(el, { opacity: 0, scale: 0.96, duration: 0.16, ease: "power2.in", onComplete: done });
+    else done();
+  }
+
+  function reopenWindow(id) {
+    delete WINDOWS[id].closed;
+    delete WINDOWS[id].badge;
+    hero.order = [id, ...hero.order.filter((other) => other !== id)];
+    placeWindows();
+    updateDock();
+    const el = hero.elements.get(id);
+    if (el && animate) gsap.from(el, { opacity: 0, scale: 0.9, duration: 0.3, ease: "power3.out" });
+  }
+
+  // Minimizing sends the window to the Dock. The switcher still lists it, marked as minimized.
+  function minimizeWindow(id) {
+    const el = hero.elements.get(id);
+    const done = () => {
+      el?.remove();
+      hero.elements.delete(id);
+      WINDOWS[id].badge = "minimized";
+      placeWindows();
+    };
+    if (el && animate) {
+      const slot = dock.querySelector(`[data-dock="${WINDOWS[id].icon}"]`);
+      const x = slot ? slot.offsetLeft + dock.offsetLeft - el.offsetLeft - el.offsetWidth / 2 + 24 : 0;
+      gsap.to(el, { x, y: 760 - el.offsetTop, scale: 0.08, opacity: 0, duration: 0.42, ease: "power3.in", transformOrigin: "50% 100%", onComplete: done });
+    } else done();
+  }
+
+  function zoomWindow(id) {
+    const el = hero.elements.get(id);
+    const def = WINDOWS[id];
+    if (!el) return;
+    focusWindow(id);
+    const target = def.zoomed
+      ? { left: def.zoomed.left, top: def.zoomed.top, width: def.zoomed.width, height: def.zoomed.height }
+      : { left: 0, top: 24, width: 1200, height: 726 };
+    if (def.zoomed) delete def.zoomed;
+    else def.zoomed = { left: el.offsetLeft, top: el.offsetTop, width: el.offsetWidth, height: el.offsetHeight };
+    el.classList.toggle("zoomed", Boolean(def.zoomed));
+    if (animate) gsap.to(el, { ...target, duration: 0.35, ease: "power3.inOut" });
+    else Object.assign(el.style, Object.fromEntries(Object.entries(target).map(([k, v]) => [k, `${v}px`])));
+  }
 
   function placeWindows(animateIn = false) {
+    const visible = hero.order.filter((id) => !WINDOWS[id].badge && !WINDOWS[id].closed);
     hero.order.forEach((id, index) => {
       const def = WINDOWS[id];
-      if (def.badge) return; // minimized, or on another Space
+      if (def.badge || def.closed) return; // minimized, on another Space, or closed
       let el = hero.elements.get(id);
       if (!el) {
         el = buildWindow(id, "desk-window");
         el.style.left = `${def.x}px`;
         el.style.top = `${def.y}px`;
         el.addEventListener("pointerdown", () => !hero.open && focusWindow(id));
+        wireWindow(id, el);
         desktop.append(el);
         hero.elements.set(id, el);
       }
       el.style.zIndex = String(30 - index);
-      el.classList.toggle("key-window", index === 0);
-      el.classList.toggle("inactive", index !== 0);
+      el.classList.toggle("key-window", id === visible[0]);
+      el.classList.toggle("inactive", id !== visible[0]);
     });
-    $("#front-app").textContent = WINDOWS[hero.order[0]].app;
+    $("#front-app").textContent = WINDOWS[visible[0] || "finder"].app;
     if (animateIn && animate) {
       const els = hero.order.map((id) => hero.elements.get(id)).filter(Boolean).reverse();
       gsap.from(els, { opacity: 0, y: 24, scale: 0.97, duration: 0.7, ease: "power3.out", stagger: 0.08, delay: 0.1 });
     }
   }
 
-  const heroItems = () => hero.order.map((id) => ({ key: id, window: id, ...WINDOWS[id] }));
+  const heroItems = () => hero.order.filter((id) => !WINDOWS[id].closed).map((id) => ({ key: id, window: id, ...WINDOWS[id] }));
 
   function openSwitcher() {
     if (hero.open) return;
@@ -402,6 +519,7 @@
     delete def.badge; // it's on this Space and unminimized now
     hero.order = [id, ...hero.order.filter((other) => other !== id)];
     placeWindows();
+    updateDock();
     const el = hero.elements.get(id);
     if (kind && animate) {
       if (kind === "minimized") gsap.from(el, { y: 300, scale: 0.15, opacity: 0, duration: 0.5, ease: "power3.out", transformOrigin: "50% 100%" });
@@ -576,6 +694,7 @@
   }
 
   placeWindows(true);
+  updateDock();
   new IntersectionObserver(([entry]) => {
     hero.inView = entry.intersectionRatio > 0.25;
     if (!hero.inView && hero.open) cancel();
@@ -587,7 +706,7 @@
 
   for (const el of $$('[data-demo="styles"]')) {
     const panel = new Panel(el, { typeable: true });
-    const order = ["browser", "code", "messages", "design", "calendar", "photos", "mail"];
+    const order = ["browser", "code", "messages", "finder", "calendar", "photos", "mail"];
     panel.setItems(order.map((id) => ({ key: id, window: id, ...WINDOWS[id], badge: undefined, sub: WINDOWS[id].app })));
     panel.render({ selected: 1 });
     const buttons = $$("[data-style-choice]", el.closest("section"));
@@ -669,13 +788,13 @@
   for (const el of $$('[data-demo="find"]')) {
     const panel = new Panel(el, { typeable: true });
     panel.setItems([
-      { key: "f1", title: "Four days in Lisbon", app: "Browser", sub: "Browser", icon: "app-browser" },
-      { key: "f2", title: "Lisbon trip", app: "Messages", sub: "Messages", icon: "app-messages" },
-      { key: "f3", title: "Flights to Lisbon", app: "Browser", sub: "Personal · flights.example", icon: "app-globe", tab: true },
-      { key: "f4", title: "Q3 planning", app: "Browser", sub: "Work · docs.google.com", icon: "app-globe", tab: true },
-      { key: "f5", title: "Inbox", app: "Mail", sub: "Mail", icon: "app-mail" },
-      { key: "f6", title: "Pull requests", app: "Browser", sub: "Work · github.com", icon: "app-orbit", tab: true },
-      { key: "f7", title: "Switcher.swift", app: "Code", sub: "Code", icon: "app-code" },
+      { key: "f1", title: "Four days in Lisbon", app: "Safari", sub: "Safari", icon: "safari" },
+      { key: "f2", title: "Lisbon trip", app: "Messages", sub: "Messages", icon: "messages" },
+      { key: "f3", title: "Flights to Lisbon", app: "Safari", sub: "Personal · flights.example", icon: "safari", tab: true },
+      { key: "f4", title: "Q3 planning", app: "Safari", sub: "Work · docs.google.com", icon: "safari", tab: true },
+      { key: "f5", title: "Inbox", app: "Mail", sub: "Mail", icon: "mail" },
+      { key: "f6", title: "Pull requests", app: "Safari", sub: "Work · github.com", icon: "safari", tab: true },
+      { key: "f7", title: "Switcher.swift", app: "Xcode", sub: "Xcode", icon: "xcode" },
     ]);
     panel.render({ selected: 0 });
     whileVisible(panel.el, async (alive) => {
@@ -705,7 +824,7 @@
 
   for (const demo of $$('[data-demo="trackpad"]')) {
     const strip = $(".strip", demo);
-    strip.innerHTML = ["app-browser", "app-messages", "app-code", "app-design", "app-photos"].map((id) => icon(id)).join("");
+    strip.innerHTML = ["safari", "messages", "xcode", "finder", "photos"].map((id) => icon(id)).join("");
     const cells = [...strip.children];
     const select = (index) => cells.forEach((cell, i) => cell.classList.toggle("selected", i === index));
     select(0);
@@ -730,7 +849,7 @@
 
   for (const el of $$('[data-demo="buttons"]')) {
     const panel = new Panel(el, { thumb: { w: 204, h: 128 } });
-    const all = ["browser", "code", "messages", "photos", "design", "calendar"].map((id) => ({ key: id, window: id, ...WINDOWS[id], badge: undefined }));
+    const all = ["browser", "code", "messages", "photos", "finder", "calendar"].map((id) => ({ key: id, window: id, ...WINDOWS[id], badge: undefined }));
     panel.setItems(all);
     panel.render({ selected: 0 });
     for (const cell of panel.cells.values()) {
