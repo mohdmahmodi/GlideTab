@@ -9,13 +9,18 @@ final class Updater {
     private let repository = Bundle.main.object(forInfoDictionaryKey: "GlideTabUpdateRepository") as? String
     private var timer: Timer?
     private var isChecking = false
+    private var scheduledFirstCheck = false
 
     var currentVersion: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0" }
 
     func start() {
         timer?.invalidate()
         guard Prefs.autoUpdate else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 30) { self.check(userInitiated: false) }
+        // The first check runs once per launch, however many times automatic updates are toggled.
+        if !scheduledFirstCheck {
+            scheduledFirstCheck = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 30) { if Prefs.autoUpdate { self.check(userInitiated: false) } }
+        }
         timer = Timer.scheduledTimer(withTimeInterval: 24 * 60 * 60, repeats: true) { _ in self.check(userInitiated: false) }
         timer?.tolerance = 60 * 60
     }

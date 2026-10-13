@@ -16,14 +16,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         if Debug.run() { return }
         #endif
         // A second copy (say, a new download opened while the old one runs) hands over to the first and quits.
-        if let other = AppMover.otherInstances.first {
-            // Only an established copy gets the reopen, so two fresh copies can't keep launching each other.
-            if let url = other.bundleURL, (other.launchDate ?? .distantPast) < Date(timeIntervalSinceNow: -3) {
-                NSWorkspace.shared.open(url)
+        // A copy on its way out (an update or "Quit & Reopen" relaunch) can still be listed for a moment, so
+        // look again before deciding.
+        if !AppMover.otherInstances.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [self] in
+                if let other = AppMover.otherInstances.first, !other.isTerminated {
+                    // Only an established copy gets the reopen, so two fresh copies can't keep launching each other.
+                    if let url = other.bundleURL, (other.launchDate ?? .distantPast) < Date(timeIntervalSinceNow: -5) {
+                        NSWorkspace.shared.open(url)
+                    }
+                    NSApp.terminate(nil)
+                } else {
+                    launch()
+                }
             }
-            NSApp.terminate(nil)
             return
         }
+        launch()
+    }
+
+    /// Everything after the single-copy check.
+    private func launch() {
         // Opened straight from Downloads: offer to move to Applications first, where updates can install.
         if AppMover.offerAtLaunch() { return }
 
@@ -37,10 +50,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         // Undo a ⌘Tab takeover left by a crashed run; Switcher.start takes it over again once the tap is live.
         Private.setNativeCommandTab(enabled: true)
         restoreCommandTabOnSignals()
-        Updater.shared.start()
 
         // Explain the permissions before macOS asks for them. Also reopens after the Screen Recording relaunch.
-        if Onboarding.isNeeded { showOnboarding() }
+        // Update checks wait until setup is done, so no update alert lands on top of it.
+        if Onboarding.isNeeded { showOnboarding() } else { Updater.shared.start() }
         if Permissions.accessibility {
             start()
         } else {
@@ -179,6 +192,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
             settingsWindow = nil
         } else if (notification.object as? NSWindow) === onboardingWindow {
             onboardingWindow = nil
+            if !Onboarding.isNeeded { Updater.shared.start() }
         }
     }
 }
